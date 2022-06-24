@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1c1c1d"
+    android:paddingLeft="@dimen/_15sdp"
+    android:paddingTop="@dimen/_20sdp"
+    android:paddingRight="@dimen/_20sdp"
+    tools:context=".presentation.newFaceTimeScreen.NewFaceTimeFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="#35c759"
+            android:textSize="@dimen/_13ssp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="sans-serif-medium"
+            android:shadowColor="@color/white"
+            android:text="New FaceTime"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_23ssp" />
+
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:backgroundTint="@color/background"
+                app:expandedHintEnabled="false"
+                app:prefixText="To: "
+                app:prefixTextColor="#6c6c6c">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:duplicateParentState="false"
+                    android:backgroundTint="#1c1c1d"
+                    android:background="#1c1c1d">
+
+                </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etToUsers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#1c1c1d"
+                    android:imeOptions="actionDone"
+                    app:layout_flexGrow="1"
+                    android:inputType="text"
+                    android:backgroundTint="#1c1c1d" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@android:drawable/divider_horizontal_dark" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:paddingBottom="@dimen/_20sdp">
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnAudioCall"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_alignParentLeft="true"
+                android:backgroundTint="#21492c"
+                app:cardCornerRadius="@dimen/_100sdp">
+
+                <ImageView
+                    android:id="@+id/ivAudioCall"
+                    android:layout_width="@dimen/_17sdp"
+                    android:layout_height="@dimen/_17sdp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_phone_24"
+                    android:tint="#35c759" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnFaceTimeCall"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_33sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/_15sdp"
+                android:backgroundTint="#2ed158"
+                app:cardCornerRadius="@dimen/_8sdp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/_12sdp"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingRight="@dimen/_12sdp"
+                    android:paddingBottom="@dimen/_2sdp">
+
+                    <ImageView
+                        android:id="@+id/ivFaceTimeCall"
+                        android:layout_width="@dimen/_22sdp"
+                        android:layout_height="@dimen/_22sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:src="@drawable/ic_round_videocam_24"
+                        android:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvFaceTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="FaceTime"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>
