@@ -11,7 +11,6 @@ This repository contains a **FaceTimeClone app** that implements Coroutines , mv
 
 ## App Overview
 
-- login and sign up screens
 <img src="https://github.com/adelayman1/AndroidFaceTimeClone/blob/master/images/screen0.png" width="700" />
 
 <img src="https://github.com/adelayman1/AndroidFaceTimeClone/blob/master/images/screen2.png" width="700" />
