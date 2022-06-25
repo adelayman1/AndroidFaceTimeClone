@@ -25,7 +25,7 @@ This repository contains a **FaceTimeClone app** that implements Coroutines , mv
 *  [LiveData](https://developer.android.com/topic/libraries/architecture/livedata/) 
 *  mvvm architecture
 *  Clean architecture
-*  Retrofit
+*  [Retrofit](https://square.github.io/retrofit/)
 *  [Navigation component](https://developer.android.com/guide/navigation)
 *  [JitsiMeet](https://jitsi.github.io/handbook/docs/intro/)
 *  [Hilt](https://developer.android.com/training/dependency-injection/hilt-jetpack) 
