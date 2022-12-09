@@ -1,4 +1,4 @@
-package com.adel.facetimeclone.presentation.baseScreen
+package com.adel.facetimeclone.presentation.mainActivity
 
 import androidx.lifecycle.ViewModel
 import com.adel.facetimeclone.domain.usecases.CheckIsLoggedInUseCase

@@ -35,14 +35,21 @@
             android:textSize="@dimen/_23ssp" />
 
 
-
+        <ProgressBar
+            android:id="@+id/progressEtFaceTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:visibility="gone"/>
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilUsers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/background"
                 android:backgroundTint="@color/background"
                 app:expandedHintEnabled="false"
                 app:prefixText="To: "
+                android:visibility="visible"
                 app:prefixTextColor="#6c6c6c">
 
                 <com.google.android.material.chip.ChipGroup

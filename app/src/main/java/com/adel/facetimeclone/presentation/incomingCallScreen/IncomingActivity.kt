@@ -9,12 +9,19 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.adel.facetimeclone.databinding.ActivityIncomingBinding
 import com.adel.facetimeclone.domain.entities.Result
+import com.adel.facetimeclone.presentation.homeScreen.uiStates.HomeUiEvent
+import com.adel.facetimeclone.presentation.incomingCallScreen.uiStates.IncomingCallUiEvent
 import com.facebook.react.modules.core.PermissionListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetActivityInterface
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
@@ -24,7 +31,6 @@ import org.jitsi.meet.sdk.JitsiMeetView
 class IncomingActivity : AppCompatActivity(), JitsiMeetActivityInterface {
     var roomKey: String? = null
     var roomType: String = "audio"
-    var roomAuthor: String = ""
     var jitsiMeetView: JitsiMeetView? = null
 
     lateinit var viewModel: IncomingCallViewModel
@@ -56,24 +62,29 @@ class IncomingActivity : AppCompatActivity(), JitsiMeetActivityInterface {
                 viewModel.declineCall(roomKey!!)
             finish()
         }
-        viewModel.isAgreeSuccess.observe(this, {
-            when (it) {
-                is Result.Success -> {
-                    jitsiMeetView = JitsiMeetView(this)
-                    var conferenceOptions: JitsiMeetConferenceOptions =
+        lifecycleScope.launchWhenStarted {
+            viewModel.eventFlow.collect {
+                when (it) {
+                    IncomingCallUiEvent.Answer -> {
+                        jitsiMeetView = JitsiMeetView(this@IncomingActivity)
+                        var conferenceOptions: JitsiMeetConferenceOptions =
                             JitsiMeetConferenceOptions.Builder()
-                                    .setRoom("https://meet.jit.si/${roomKey!!.replace("-", "1")}")
-                                    .setAudioMuted(false)
-                                    .setVideoMuted(roomType == "AudioCall")
-                                    .setFeatureFlag("invite.enabled", false)
-                                    .build()
-                    JitsiMeetActivity.launch(this, conferenceOptions)
-                }
-                is Result.Error ->{
-                    Toast.makeText(this,it.msg, Toast.LENGTH_SHORT).show()
+                                .setRoom("https://meet.jit.si/${roomKey!!.replace("-", "1")}")
+                                .setAudioMuted(false)
+                                .setVideoMuted(roomType == "AudioCall")
+                                .setFeatureFlag("invite.enabled", false)
+                                .build()
+                        JitsiMeetActivity.launch(this@IncomingActivity, conferenceOptions)
+                    }
+                    IncomingCallUiEvent.Decline -> finish()
+                    is IncomingCallUiEvent.ShowMessage -> Toast.makeText(
+                        this@IncomingActivity,
+                        it.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-        })
+        }
     }
 
     var invitationResponse: BroadcastReceiver = object : BroadcastReceiver() {
@@ -89,15 +100,15 @@ class IncomingActivity : AppCompatActivity(), JitsiMeetActivityInterface {
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
-                invitationResponse,
-                IntentFilter("response")
+            invitationResponse,
+            IntentFilter("response")
         )
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(
-                invitationResponse
+            invitationResponse
         )
 
     }

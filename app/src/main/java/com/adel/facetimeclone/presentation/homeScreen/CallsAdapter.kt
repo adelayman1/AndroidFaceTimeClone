@@ -9,8 +9,9 @@ import com.adel.facetimeclone.R
 import com.adel.facetimeclone.data.model.RoomModel
 import com.adel.facetimeclone.data.utils.DateAndTimeUtils
 import com.adel.facetimeclone.databinding.CallItemBinding
+import com.adel.facetimeclone.presentation.homeScreen.uiStates.CallItemUiState
 
-class CallsAdapter(var callsList: List<RoomModel>) :
+class CallsAdapter(var callsList: List<CallItemUiState>) :
     RecyclerView.Adapter<CallsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,13 +26,13 @@ class CallsAdapter(var callsList: List<RoomModel>) :
             callsList[position].let { item ->
                 if (item.time.isNullOrEmpty())
                     return
-                binding.tvDate.text=DateAndTimeUtils().fromMillisSecondToDate(item.time)
+                binding.tvDate.text = DateAndTimeUtils.fromMillisSecondToDate(item.time)
                 if (callsList.size == 1) { // لو لوحده
                     binding.tvTime.visibility = VISIBLE
                     binding.bottomView.visibility = GONE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
                     binding.card.setBackgroundResource(R.drawable.normal_background)
-                } else if ((position == 0 && DateAndTimeUtils().covertTimeToText(item.time) == DateAndTimeUtils().covertTimeToText(
+                } else if ((position == 0 && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
                     ))
                 ) {
@@ -40,8 +41,8 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.tvTime.visibility = VISIBLE
 
                     binding.bottomView.visibility = VISIBLE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
-                } else if ((position == 0 && DateAndTimeUtils().covertTimeToText(item.time) != DateAndTimeUtils().covertTimeToText(
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
+                } else if ((position == 0 && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
                     ))
                 ) {
@@ -49,12 +50,12 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.card.setBackgroundResource(R.drawable.normal_background)
                     binding.tvTime.visibility = VISIBLE
                     binding.bottomView.visibility = GONE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
-                } else if ((position != (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
+                } else if ((position != (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) == DateAndTimeUtils().covertTimeToText(
+                    ) == DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
-                    ) && DateAndTimeUtils().covertTimeToText(item.time) == DateAndTimeUtils().covertTimeToText(
+                    ) && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
                         callsList[position - 1].time ?: "10"
                     ))
                 ) {
@@ -62,28 +63,28 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.card.setBackgroundResource(R.drawable.middle_background)
                     binding.bottomView.visibility = VISIBLE
                     binding.tvTime.visibility = GONE
-                } else if ((position == (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                } else if ((position == (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) == DateAndTimeUtils().covertTimeToText(callsList[position - 1].time ?: "10"))
+                    ) == DateAndTimeUtils.covertTimeToText(callsList[position - 1].time ?: "10"))
                 ) {
                     //                 لو الأخير وفوقه عنصر شبه
                     binding.card.setBackgroundResource(R.drawable.bottom_background)
                     binding.bottomView.visibility = GONE
                     binding.tvTime.visibility = GONE
-                } else if ((position == (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                } else if ((position == (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) != DateAndTimeUtils().covertTimeToText(callsList[position - 1].time ?: "10"))
+                    ) != DateAndTimeUtils.covertTimeToText(callsList[position - 1].time ?: "10"))
                 ) {
                     //                 لو الأخير وفوقه عنصر مش شبه
                     binding.card.setBackgroundResource(R.drawable.normal_background)
                     binding.bottomView.visibility = GONE
                     binding.tvTime.visibility = VISIBLE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
-                } else if ((position != (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
+                } else if ((position != (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) != DateAndTimeUtils().covertTimeToText(
+                    ) != DateAndTimeUtils.covertTimeToText(
                         callsList[position - 1].time ?: "10"
-                    ) && DateAndTimeUtils().covertTimeToText(item.time) == DateAndTimeUtils().covertTimeToText(
+                    ) && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
                     ))
                 ) {
@@ -91,12 +92,12 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.card.setBackgroundResource(R.drawable.top_background)
                     binding.tvTime.visibility = VISIBLE
                     binding.bottomView.visibility = VISIBLE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
-                } else if ((position != (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
+                } else if ((position != (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) == DateAndTimeUtils().covertTimeToText(
+                    ) == DateAndTimeUtils.covertTimeToText(
                         callsList[position - 1].time ?: "10"
-                    ) && DateAndTimeUtils().covertTimeToText(item.time) != DateAndTimeUtils().covertTimeToText(
+                    ) && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
                     ))
                 ) {
@@ -104,11 +105,11 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.card.setBackgroundResource(R.drawable.bottom_background)
                     binding.tvTime.visibility = GONE
                     binding.bottomView.visibility = GONE
-                } else if ((position != (callsList.size - 1) && DateAndTimeUtils().covertTimeToText(
+                } else if ((position != (callsList.size - 1) && DateAndTimeUtils.covertTimeToText(
                         item.time
-                    ) != DateAndTimeUtils().covertTimeToText(
+                    ) != DateAndTimeUtils.covertTimeToText(
                         callsList[position + 1].time ?: "10"
-                    ) && DateAndTimeUtils().covertTimeToText(item.time) != DateAndTimeUtils().covertTimeToText(
+                    ) && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
                         callsList[position - 1].time ?: "10"
                     ))
                 ) {
@@ -116,7 +117,7 @@ class CallsAdapter(var callsList: List<RoomModel>) :
                     binding.card.setBackgroundResource(R.drawable.normal_background)
                     binding.bottomView.visibility = GONE
                     binding.tvTime.visibility = VISIBLE
-                    binding.tvTime.text = DateAndTimeUtils().covertTimeToText(item.time)
+                    binding.tvTime.text = DateAndTimeUtils.covertTimeToText(item.time)
                 }
                 if (item.roomType == "link") {
                     binding.tvName.text = "FaceTime Link"

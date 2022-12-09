@@ -5,10 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.adel.facetimeclone.R
+import com.adel.facetimeclone.presentation.outgoingCallScreen.uiStates.OutgoingCallUiEvent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import org.jitsi.meet.sdk.BroadcastEvent
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
@@ -44,9 +48,15 @@ class OutgoingCallActivity : JitsiMeetActivity() {
                 conferenceTerminatedListener,
                 IntentFilter(BroadcastEvent.Type.CONFERENCE_TERMINATED.action)
         )
-        viewModel.isRoomClosedSuccess.observe(this, {
-            finish()
-        })
+        lifecycleScope.launchWhenStarted {
+            viewModel.eventFlow.collect {
+                when(it){
+                    OutgoingCallUiEvent.ClosedSuccess -> finish()
+                    is OutgoingCallUiEvent.ShowMessage -> Toast.makeText(this@OutgoingCallActivity, it.message, Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
     }
     var conferenceTerminatedListener: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {

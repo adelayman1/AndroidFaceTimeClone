@@ -2,14 +2,14 @@ package com.adel.facetimeclone.data.utils
 
 import org.jetbrains.annotations.NotNull
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
-class DateAndTimeUtils {
-    private val SECOND_MILLIS: Long = 1000
-    private val MINUTE_MILLIS: Long = 60 * SECOND_MILLIS
-    private val HOUR_MILLIS: Long = 60 * MINUTE_MILLIS
-    private val DAY_MILLIS: Long = 24 * HOUR_MILLIS
-    private val suffix = "Ago"
+object DateAndTimeUtils {
+    private const val SECOND_MILLIS: Long = 1000
+    private const val MINUTE_MILLIS: Long = 60 * SECOND_MILLIS
+    private const val HOUR_MILLIS: Long = 60 * MINUTE_MILLIS
+    private const val DAY_MILLIS: Long = 24 * HOUR_MILLIS
+    private const val SUFFIX = "Ago"
     fun covertTimeToText(@NotNull time: String): String? {
         if (time.toLong() < 1000000000000L) {
             throw(Exception("Enter time in milliseconds"))
@@ -24,12 +24,12 @@ class DateAndTimeUtils {
         } else {
             if (dateDiff > 30 * DAY_MILLIS) {
                 if (dateDiff > 360 * DAY_MILLIS) {
-                    ((dateDiff / DAY_MILLIS) / 360).toString() + " Years " + suffix
+                    ((dateDiff / DAY_MILLIS) / 360).toString() + " Years " + SUFFIX
                 } else {
-                    ((dateDiff / DAY_MILLIS) / 30).toString() + " Months " + suffix
+                    ((dateDiff / DAY_MILLIS) / 30).toString() + " Months " + SUFFIX
                 }
             } else {
-                ((dateDiff / DAY_MILLIS)).toString() + " days " + suffix
+                ((dateDiff / DAY_MILLIS)).toString() + " days " + SUFFIX
             }
         }
     }

@@ -1,6 +1,6 @@
-package com.adel.facetimeclone.data.di.module
+package com.adel.facetimeclone.di.module
 
-import com.adel.facetimeclone.data.api.FcmApiService
+import com.adel.facetimeclone.data.source.remote.endPoints.FCMCallApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class ApiModule {
     @Singleton
     @Provides
-    fun provideFCMApiService(retrofit: Retrofit): FcmApiService {
-        return retrofit.create(FcmApiService::class.java)
+    fun provideFCMApiService(retrofit: Retrofit): FCMCallApiService {
+        return retrofit.create(FCMCallApiService::class.java)
     }
 }

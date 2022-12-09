@@ -7,9 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.adel.facetimeclone.databinding.FragmentSignUpBinding
-import com.adel.facetimeclone.domain.entities.Result
+import com.adel.facetimeclone.presentation.signUpScreen.uiStates.SignupUiEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 lateinit var viewModel: SignUpViewModel
 class SignUpFragment : Fragment() {
@@ -23,19 +28,28 @@ class SignUpFragment : Fragment() {
         binding.tvHaveAnAccount.setOnClickListener {
             findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToLoginFragment())
         }
-        viewModel.isLoading.observe(this,{
-            binding.btnSignUp.isEnabled = !it
-        })
-        viewModel.isSignedUpSuccess.observe(this,{
-            when(it){
-                is Result.Success ->{
-                    findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToHomeFragment())
-                }
-                is Result.Error ->{
-                    Toast.makeText(requireContext(),it.msg, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launchWhenStarted {
+            launch(Dispatchers.Main) {
+                viewModel.signupUiState.collect {
+                    binding.btnSignUp.isEnabled = !it.isLoading
                 }
             }
-        })
+            launch(Dispatchers.Main) {
+                viewModel.eventFlow.collectLatest {
+                    when (it) {
+                        SignupUiEvent.SignupSuccess -> findNavController().navigate(
+                            SignUpFragmentDirections.actionSignUpFragmentToHomeFragment()
+                        )
+
+                        is SignupUiEvent.ShowMessage -> Toast.makeText(
+                            requireContext(),
+                            it.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
         return binding.root
     }
 }

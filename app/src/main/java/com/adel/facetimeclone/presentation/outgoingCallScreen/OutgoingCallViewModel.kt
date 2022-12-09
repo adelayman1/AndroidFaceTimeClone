@@ -5,8 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adel.facetimeclone.domain.entities.Result
 import com.adel.facetimeclone.domain.usecases.KickOutAllRoomUsersUseCase
+import com.adel.facetimeclone.presentation.outgoingCallScreen.uiStates.OutgoingCallUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,12 +18,17 @@ import javax.inject.Inject
 class OutgoingCallViewModel @Inject constructor(
     val kickOutAllRoomUsersUseCase: KickOutAllRoomUsersUseCase
 ) : ViewModel() {
-    var isRoomClosedSuccess:MutableLiveData<Result<Any>> = MutableLiveData(Result.Loading())
+    private var _eventFlow = MutableSharedFlow<OutgoingCallUiEvent>()
+    val eventFlow: SharedFlow<OutgoingCallUiEvent> = _eventFlow.asSharedFlow()
     fun closeRoom(roomKey: String,users:List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val kickOutAllRoomUsersResult = kickOutAllRoomUsersUseCase.invoke(roomKey,users)
-            isRoomClosedSuccess.postValue(kickOutAllRoomUsersResult)
+            try {
+                kickOutAllRoomUsersUseCase.invoke(roomKey,users).also {
+                    _eventFlow.emit(OutgoingCallUiEvent.ClosedSuccess)
+                }
+            }catch (e:Exception){
+                _eventFlow.emit(OutgoingCallUiEvent.ShowMessage(e.message.toString()))
+            }
         }
     }
-
 }
