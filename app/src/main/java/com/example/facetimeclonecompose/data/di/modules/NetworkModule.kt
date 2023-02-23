@@ -1,7 +1,9 @@
 package com.example.facetimeclonecompose.data.di.modules
 
 import android.content.SharedPreferences
-import com.example.facetimeclonecompose.data.utilities.Constants.USER_TOKEN_SHARED_PREFERENCES_KEY
+import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
+import com.example.facetimeclonecompose.data.utilities.Constants.USER_TOKEN_PREFERENCE_DATA_STORE_KEY
+import com.example.facetimeclonecompose.data.utilities.PreferenceDataStoreHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +16,8 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.header
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
 @Module
@@ -21,7 +25,7 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideHttpClient(prefs: SharedPreferences): HttpClient {
+    fun provideHttpClient(dataStoreHelper: PreferenceDataStoreHelper,coroutineScope: CoroutineScope): HttpClient {
         return HttpClient(CIO) {
             install(Logging)
             install(WebSockets)
@@ -30,7 +34,14 @@ class NetworkModule {
             }
             install(DefaultRequest) {
                 if (!headers.contains("No-Authentication")) {
-                    header("Authorization", (prefs.getString(USER_TOKEN_SHARED_PREFERENCES_KEY, null) ?: ""))
+                    coroutineScope.launch {
+                        header(
+                            "Authorization", dataStoreHelper.getFirstPreference(
+                                USER_TOKEN_PREFERENCE_DATA_STORE_KEY,
+                                GUEST_USER
+                            )
+                        )
+                    }
                 }
             }
         }
