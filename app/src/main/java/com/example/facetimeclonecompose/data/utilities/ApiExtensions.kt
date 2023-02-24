@@ -14,7 +14,7 @@ suspend fun <T> makeRequestAndHandleErrors(block: suspend () -> BaseApiResponse<
         withContext(Dispatchers.IO) {
             block().also {
                 if (!it.isDataHasGotSuccessfully()) {
-                    throw Exception(it.message)
+                    throw ApiException(it.message)
                 }
             }.data
         }
@@ -22,6 +22,8 @@ suspend fun <T> makeRequestAndHandleErrors(block: suspend () -> BaseApiResponse<
         throw e.handleError()
     }
 }
+
+class ApiException(message: String) : Exception("")
 
 suspend fun ClientRequestException.handleError(): Exception {
     val content = response.readText(Charset.defaultCharset())

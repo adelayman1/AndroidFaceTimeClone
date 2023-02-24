@@ -5,6 +5,8 @@ import com.example.facetimeclonecompose.data.sources.remote.dataSources.UserRemo
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.EditFcmTokenRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.LoginRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.RegisterRequestModel
+import com.example.facetimeclonecompose.data.utilities.Constants
+import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
 import com.example.facetimeclonecompose.data.utilities.makeRequestAndHandleErrors
 import com.example.facetimeclonecompose.domain.models.UserModel
 import com.example.facetimeclonecompose.domain.repositories.UserRepository
@@ -24,6 +26,7 @@ class UserRepositoryImpl @Inject constructor(
             it.userToken?.let { userToken ->
                 userLocalDataSource.saveUserToken(userToken)
             } ?: throw Exception("UserToken not found")
+            userLocalDataSource.editUserVerifyState(it.isVerified)
             it.toUserModel()
         }
 
@@ -41,6 +44,7 @@ class UserRepositoryImpl @Inject constructor(
         }?.let {
             it.userToken?.let { userToken ->
                 userLocalDataSource.saveUserToken(userToken)
+                userLocalDataSource.editUserVerifyState(false)
             } ?: throw Exception("UserToken not found")
             it.toUserModel()
         }
@@ -63,6 +67,7 @@ class UserRepositoryImpl @Inject constructor(
         }.let {
             it?.userToken?.let { userToken ->
                 userLocalDataSource.saveUserToken(userToken)
+                userLocalDataSource.editUserVerifyState(true)
             } ?: throw Exception("UserToken not found")
             it.toUserModel()
         }
@@ -83,5 +88,13 @@ class UserRepositoryImpl @Inject constructor(
             //TODO(EditFcmTokenRequestModel TO Single String Arg)
             userRemoteDataSource.editUserFcmToken(EditFcmTokenRequestModel(fcmToken))
         }
+    }
+
+    override suspend fun isUserLoggedIn(): Boolean {
+        return userLocalDataSource.getUserToken() != GUEST_USER
+    }
+
+    override suspend fun isUserAccountVerified(): Boolean {
+        return userLocalDataSource.getUserVerifiedState()
     }
 }
