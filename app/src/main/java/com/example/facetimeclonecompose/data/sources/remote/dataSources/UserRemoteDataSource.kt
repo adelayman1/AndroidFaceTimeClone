@@ -31,6 +31,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 body = loginRequestModel
             }
         }
+
     suspend fun createNewAccount(registerRequestModel: RegisterRequestModel): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.post {
@@ -40,7 +41,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 body = registerRequestModel
             }
         }
-    //TODO(AUTH KEY REQUIRED)
+
     suspend fun getProfileData(): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.get {
@@ -49,6 +50,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 contentType(ContentType.Application.Json)
             }
         }
+
     suspend fun sendVerificationCode(): BaseApiResponse<Any> =
         withContext(Dispatchers.IO) {
             httpClient.get {
@@ -57,6 +59,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 contentType(ContentType.Application.Json)
             }
         }
+
     suspend fun verifyOtpCode(otpCode:Int): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.post {
@@ -66,6 +69,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 contentType(ContentType.Application.Json)
             }
         }
+
     suspend fun deleteAccount(): BaseApiResponse<Any> =
         withContext(Dispatchers.IO) {
             httpClient.delete {
@@ -74,6 +78,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 contentType(ContentType.Application.Json)
             }
         }
+
     suspend fun editUserFcmToken(editFcmTokenRequestModel: EditFcmTokenRequestModel): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.patch {
@@ -83,6 +88,7 @@ class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
                 body = editFcmTokenRequestModel
             }
         }
+
     suspend fun getUserFcmToken(): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.get {
