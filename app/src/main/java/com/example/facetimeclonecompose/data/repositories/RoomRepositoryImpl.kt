@@ -1,4 +1,6 @@
 package com.example.facetimeclonecompose.data.repositories
 
-class RoomRepositoryImpl {
+import com.example.facetimeclonecompose.domain.repositories.RoomRepository
+
+class RoomRepositoryImpl():RoomRepository {
 }
