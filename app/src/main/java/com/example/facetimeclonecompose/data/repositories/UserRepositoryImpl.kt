@@ -5,7 +5,6 @@ import com.example.facetimeclonecompose.data.sources.remote.dataSources.UserRemo
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.EditFcmTokenRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.LoginRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.RegisterRequestModel
-import com.example.facetimeclonecompose.data.utilities.Constants
 import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
 import com.example.facetimeclonecompose.data.utilities.makeRequestAndHandleErrors
 import com.example.facetimeclonecompose.domain.models.UserModel

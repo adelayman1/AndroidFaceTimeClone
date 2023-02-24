@@ -1,7 +1,6 @@
 package com.example.facetimeclonecompose.domain.usecases
 
 import com.example.facetimeclonecompose.domain.models.ValidateResult
-import com.example.facetimeclonecompose.domain.utilities.Constants.MINIMUM_USER_NAME_LENGTH
 import javax.inject.Inject
 
 class ValidateOtpCodeUseCase @Inject constructor() {
