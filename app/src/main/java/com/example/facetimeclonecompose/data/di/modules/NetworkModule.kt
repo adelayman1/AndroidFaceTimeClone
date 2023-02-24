@@ -1,6 +1,5 @@
 package com.example.facetimeclonecompose.data.di.modules
 
-import android.content.SharedPreferences
 import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_TOKEN_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.PreferenceDataStoreHelper
