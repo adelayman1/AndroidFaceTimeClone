@@ -16,9 +16,8 @@ import javax.inject.Inject
 class RoomRepositoryImpl @Inject constructor(
     private val roomsRemoteDataSource: RoomsRemoteDataSource,
     private val externalScope: CoroutineScope
-) :
-    RoomRepository {
-    suspend fun createRoom(roomType: RoomTypeModel, participantsEmails: List<String>?): RoomModel? {
+) : RoomRepository {
+    override suspend fun createRoom(roomType: RoomTypeModel, participantsEmails: List<String>?): RoomModel? {
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.createNewRoom(
                 CreateRoomRequestModel(
@@ -31,7 +30,7 @@ class RoomRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun getRoomInfo(roomId: String): RoomModel? {
+    override suspend fun getRoomInfo(roomId: String): RoomModel? {
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.getRoomInfo(roomId)
         }.let {
@@ -39,7 +38,7 @@ class RoomRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun getUserRooms(): List<RoomModel>? {
+    override suspend fun getUserRooms(): List<RoomModel>? {
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.getUserRooms()
         }.let {
@@ -49,7 +48,7 @@ class RoomRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun joinRoom(roomId: String): RoomModel? {
+    override suspend fun joinRoom(roomId: String): RoomModel? {
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.joinRoom(roomId)
         }.let {
@@ -57,7 +56,7 @@ class RoomRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun deleteRoom(roomId: String) {
+    override suspend fun deleteRoom(roomId: String) {
         externalScope.launch {
             makeRequestAndHandleErrors {
                 roomsRemoteDataSource.deleteRoom(roomId)
