@@ -19,7 +19,7 @@ class CreateAccountUseCase @Inject constructor(
         return userRepository.createNewAccount(name = userName, email = email, password = password)!!
     }
 
-    private suspend fun validateFields(userName: String, email: String, password: String) {
+    private fun validateFields(userName: String, email: String, password: String) {
         validateUserName(userName)
         validateEmail(email)
         validatePassword(password)

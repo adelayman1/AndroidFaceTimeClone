@@ -53,11 +53,4 @@ class PreferenceDataStoreHelper @Inject constructor(@ApplicationContext context:
             preferences.remove(key)
         }
     }
-
-    // This function clears the entire Preference Datastore.
-    suspend fun <T> clearAllPreference() {
-        dataSource.edit { preferences ->
-            preferences.clear()
-        }
-    }
 }

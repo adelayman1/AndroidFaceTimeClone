@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UserLocalDataSource @Inject constructor(var dataStore: PreferenceDataStoreHelper) {
+class UserLocalDataSource @Inject constructor(private var dataStore: PreferenceDataStoreHelper) {
     suspend fun saveUserToken(authorizationKey: String) = withContext(Dispatchers.IO) {
         dataStore.putPreference(USER_TOKEN_PREFERENCE_DATA_STORE_KEY, authorizationKey)
     }

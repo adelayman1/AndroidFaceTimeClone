@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class CreateAudioRoomUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val roomRepository: RoomRepository,
-    private val validateEmailUseCase: ValidateEmailUseCase
+    private val roomRepository: RoomRepository
 ) {
     suspend operator fun invoke(): RoomModel {
         if (!userRepository.isUserLoggedIn())

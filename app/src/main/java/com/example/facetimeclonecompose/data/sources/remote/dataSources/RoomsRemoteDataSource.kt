@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class RoomsRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
+class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClient) {
     suspend fun createNewRoom(createRoomRequestModel: CreateRoomRequestModel): BaseApiResponse<RoomResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.post {

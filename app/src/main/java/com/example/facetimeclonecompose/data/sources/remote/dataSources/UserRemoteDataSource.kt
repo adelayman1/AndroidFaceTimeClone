@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UserRemoteDataSource @Inject constructor(var httpClient: HttpClient) {
+class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClient) {
     suspend fun loginWithEmailAndPassword(loginRequestModel: LoginRequestModel): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.post {

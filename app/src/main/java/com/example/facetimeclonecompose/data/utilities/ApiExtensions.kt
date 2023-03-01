@@ -23,7 +23,7 @@ suspend fun <T> makeRequestAndHandleErrors(block: suspend () -> BaseApiResponse<
     }
 }
 
-class ApiException(message: String) : Exception("")
+class ApiException(message: String) : Exception(message)
 
 suspend fun ClientRequestException.handleError(): Exception {
     val content = response.readText(Charset.defaultCharset())

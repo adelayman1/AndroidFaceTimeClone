@@ -15,7 +15,10 @@ class RoomRepositoryImpl @Inject constructor(
     private val roomsRemoteDataSource: RoomsRemoteDataSource,
     private val externalScope: CoroutineScope
 ) : RoomRepository {
-    override suspend fun createRoom(roomType: RoomTypeModel, participantsEmails: List<String>?): RoomModel? {
+    override suspend fun createRoom(
+        roomType: RoomTypeModel,
+        participantsEmails: List<String>?
+    ): RoomModel? {
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.createNewRoom(
                 CreateRoomRequestModel(
@@ -40,8 +43,8 @@ class RoomRepositoryImpl @Inject constructor(
         return makeRequestAndHandleErrors {
             roomsRemoteDataSource.getUserRooms()
         }.let {
-            it?.map {
-                it.toRoomModel()
+            it?.map { room ->
+                room.toRoomModel()
             }
         }
     }

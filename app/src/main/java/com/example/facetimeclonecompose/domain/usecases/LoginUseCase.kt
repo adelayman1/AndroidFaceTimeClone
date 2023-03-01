@@ -18,7 +18,7 @@ class LoginUseCase @Inject constructor(
         return userRepository.login(email = email, password = password)!!
     }
 
-    private suspend fun validateFields(email: String, password: String) {
+    private fun validateFields(email: String, password: String) {
         val validateEmailResult = validateEmailUseCase(email)
         if (!validateEmailResult.isFieldDataValid())
             throw InvalidInputTextException(validateEmailResult.error ?: "")
