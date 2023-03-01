@@ -1,10 +1,8 @@
 package com.example.facetimeclonecompose.data.sources.remote.dataSources
 
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.CreateRoomRequestModel
-import com.example.facetimeclonecompose.data.sources.remote.requestModels.LoginRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.responseModels.BaseApiResponse
 import com.example.facetimeclonecompose.data.sources.remote.responseModels.RoomResponseModel
-import com.example.facetimeclonecompose.data.sources.remote.responseModels.UserResponseModel
 import com.example.facetimeclonecompose.data.utilities.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete

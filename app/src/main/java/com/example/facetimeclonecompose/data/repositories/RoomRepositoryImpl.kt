@@ -3,10 +3,8 @@ package com.example.facetimeclonecompose.data.repositories
 import com.example.facetimeclonecompose.data.sources.remote.dataSources.RoomsRemoteDataSource
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.CreateRoomRequestModel
 import com.example.facetimeclonecompose.data.utilities.makeRequestAndHandleErrors
-import com.example.facetimeclonecompose.domain.models.ParticipantModel
 import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.models.RoomTypeModel
-import com.example.facetimeclonecompose.domain.models.UserModel
 import com.example.facetimeclonecompose.domain.models.toRoomTypeEnumRequestModel
 import com.example.facetimeclonecompose.domain.repositories.RoomRepository
 import kotlinx.coroutines.CoroutineScope

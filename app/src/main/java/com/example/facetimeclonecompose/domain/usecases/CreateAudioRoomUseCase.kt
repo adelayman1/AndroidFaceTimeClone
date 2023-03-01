@@ -4,7 +4,6 @@ import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.models.RoomTypeModel
 import com.example.facetimeclonecompose.domain.repositories.RoomRepository
 import com.example.facetimeclonecompose.domain.repositories.UserRepository
-import com.example.facetimeclonecompose.domain.utilities.InvalidInputTextException
 import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
 import com.example.facetimeclonecompose.domain.utilities.UserNotVerifiedException
 import javax.inject.Inject
