@@ -4,7 +4,7 @@ import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.models.RoomTypeModel
 
 interface RoomRepository {
-    suspend fun createRoom(roomType: RoomTypeModel, participantsEmails: List<String>?): RoomModel?
+    suspend fun createRoom(roomType: RoomTypeModel, participantsEmails: List<String>? = null): RoomModel?
 
     suspend fun getRoomInfo(roomId: String): RoomModel?
 

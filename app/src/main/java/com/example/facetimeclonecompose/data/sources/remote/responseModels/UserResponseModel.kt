@@ -10,5 +10,5 @@ data class UserResponseModel(
     val isVerified: Boolean,
     val fcmToken: String? = null,
 ) {
-    fun toUserModel() = UserModel(email = email, isVerified = isVerified, fcmToken = fcmToken, userName = userName)
+    fun toUserModel() = UserModel(email = email, isVerified = isVerified, userId = userID, userName = userName)
 }
