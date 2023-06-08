@@ -20,4 +20,5 @@ interface UserRepository {
     suspend fun isUserLoggedIn():Boolean
 
     suspend fun isUserAccountVerified(): Boolean
+
 }

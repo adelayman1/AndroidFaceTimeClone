@@ -1,7 +1,9 @@
 package com.example.facetimeclonecompose.data.sources.remote.responseModels
 
 import com.example.facetimeclonecompose.domain.models.ParticipantModel
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ParticipantResponseModel(
     val userId: String,
     val userEmail: String,

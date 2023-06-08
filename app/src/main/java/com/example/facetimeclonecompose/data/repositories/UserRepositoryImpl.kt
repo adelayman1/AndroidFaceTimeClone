@@ -9,6 +9,7 @@ import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
 import com.example.facetimeclonecompose.data.utilities.makeRequestAndHandleErrors
 import com.example.facetimeclonecompose.domain.models.UserModel
 import com.example.facetimeclonecompose.domain.repositories.UserRepository
+import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -88,6 +89,7 @@ class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.editUserFcmToken(EditFcmTokenRequestModel(fcmToken))
         }
     }
+
 
     override suspend fun isUserLoggedIn(): Boolean {
         return userLocalDataSource.getUserToken() != GUEST_USER

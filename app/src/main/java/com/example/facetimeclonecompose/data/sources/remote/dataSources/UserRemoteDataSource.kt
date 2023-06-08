@@ -79,11 +79,11 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
             }
         }
 
-    suspend fun editUserFcmToken(editFcmTokenRequestModel: EditFcmTokenRequestModel): BaseApiResponse<UserResponseModel> =
+    suspend fun editUserFcmToken(editFcmTokenRequestModel: EditFcmTokenRequestModel):  BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.patch {
                 url("$BASE_URL/$USER_ENDPOINT/fcm-token")
-                header("No-Authorization","false")
+                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
                 body = editFcmTokenRequestModel
             }

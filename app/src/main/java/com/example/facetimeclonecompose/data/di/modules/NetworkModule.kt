@@ -35,10 +35,7 @@ class NetworkModule {
                 if (!headers.contains("No-Authentication")) {
                     coroutineScope.launch {
                         header(
-                            "Authorization", dataStoreHelper.getFirstPreference(
-                                USER_TOKEN_PREFERENCE_DATA_STORE_KEY,
-                                GUEST_USER
-                            )
+                            "Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvdXNlciIsImlzcyI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MC8iLCJ2ZXJpZmllZCI6dHJ1ZSwiZXhwIjoxNzE3MjIxNzMzLCJ1c2VySWQiOiI2M2Q1YjJjOGRiMzkyOTU0ZWNhZTk3MzcifQ.hn2V2WI6AQv-jcHyUrwh_kIfGFE-ljy9mWDRIytAfN8"
                         )
                     }
                 }
@@ -46,3 +43,8 @@ class NetworkModule {
         }
     }
 }
+
+//TODO("dataStoreHelper.getFirstPreference(
+//                                USER_TOKEN_PREFERENCE_DATA_STORE_KEY,
+//                                GUEST_USER
+//                            )")
