@@ -1,4 +1,4 @@
-package com.example.facetimeclonecompose.ui.theme
+package com.example.facetimeclonecompose.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

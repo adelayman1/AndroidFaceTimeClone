@@ -1,4 +1,4 @@
-package com.example.facetimeclonecompose.ui.theme
+package com.example.facetimeclonecompose.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
