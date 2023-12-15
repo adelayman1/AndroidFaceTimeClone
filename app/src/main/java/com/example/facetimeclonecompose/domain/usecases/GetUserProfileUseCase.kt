@@ -7,14 +7,15 @@ import com.example.facetimeclonecompose.domain.utilities.UserNotVerifiedExceptio
 import javax.inject.Inject
 
 class GetUserProfileUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend operator fun invoke(userEmail:String): UserModel {
+    suspend operator fun invoke(userEmail:String?=null): UserModel {
 //        if (!userRepository.isUserLoggedIn())
 //            throw UserNotFoundException()
 //        if (!userRepository.isUserAccountVerified())
 //            throw UserNotVerifiedException()
         //TODO("DELETE")
-        val x= userRepository.getUserProfileDataByEmail(userEmail)
-        println("$x aaaaaaaaaaaaaaa")
-        return x
+        if(userEmail==null)
+            return userRepository.getUserProfileData()//My Profile
+        else
+            return userRepository.getUserProfileDataByEmail(userEmail)
     }
 }

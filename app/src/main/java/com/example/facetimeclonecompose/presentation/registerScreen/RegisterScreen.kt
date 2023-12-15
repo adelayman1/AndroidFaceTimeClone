@@ -176,15 +176,7 @@ fun RegisterScreen(
                 }
                 Spacer(Modifier.size(20.sdp))
                 TextButton(onClick = {
-//                TODO("EDIT")    var conferenceOptions: JitsiMeetConferenceOptions =
-//                        JitsiMeetConferenceOptions.Builder()
-//                            .setRoom("https://meet.jit.si/8sljhjjshhd8}")
-//                            .setAudioMuted(false)
-//                            .setUserInfo(JitsiMeetUserInfo(name))
-//                            .setVideoMuted(true)
-//                            .setFeatureFlag("invite.enabled", false)
-//                            .build()
-//                    JitsiMeetActivity.launch(context, conferenceOptions)
+
                    navController.navigate(Screen.LoginScreen.route)
                 }) {
                     Text(

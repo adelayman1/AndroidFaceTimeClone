@@ -39,8 +39,10 @@ import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
 import com.example.facetimeclonecompose.presentation.ui.theme.Green
 import com.example.facetimeclonecompose.presentation.homeScreen.components.DefaultCard
 import com.example.facetimeclonecompose.presentation.homeScreen.components.RoomListItem
+import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.HomeUiEvent
 import com.example.facetimeclonecompose.presentation.utilities.DateAndTimeUtils
 import com.example.facetimeclonecompose.presentation.ui.theme.Gray60
+import com.example.facetimeclonecompose.presentation.utilities.Screen
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.flow.collectLatest
@@ -110,14 +112,18 @@ fun HomeScreen(
                         icon = Icons.Rounded.Link,
                         modifier = Modifier.weight(1f),
                         rotate = 33f,
-                        onClick = {})
+                        onClick = {
+                            viewModel.onEvent(HomeUiEvent.CreateLink)
+                        })
                     Spacer(modifier = Modifier.size(10.sdp))
                     DefaultCard(
                         text = "New FaceTime",
                         icon = Icons.Rounded.Videocam,
                         modifier = Modifier.weight(1f),
                         color = Green,
-                        onClick = {})
+                        onClick = {
+                           navController.navigate(Screen.CreateRoomScreen.route)
+                        })
                 }
                 LazyColumn(modifier = Modifier.padding(top = 20.sdp), content = {
                     if (viewModel.roomsUiState.noRooms) {

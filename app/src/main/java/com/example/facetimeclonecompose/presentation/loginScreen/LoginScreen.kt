@@ -74,7 +74,7 @@ fun LoginScreen(
             when (event) {
                 is UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.error)
                 UiEvent.LoginSuccess -> navController.navigate(Screen.HomeScreen.route)
-                UiEvent.VerifyAccount -> navController.navigate(Screen.HomeScreen.route)//TODO("EDIT")
+                UiEvent.VerifyAccount -> navController.navigate(Screen.HomeScreen.route) // TODO("EDIT")
             }
         }
     }

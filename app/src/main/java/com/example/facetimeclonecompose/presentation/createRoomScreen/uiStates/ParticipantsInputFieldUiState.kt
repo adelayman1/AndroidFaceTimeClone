@@ -4,5 +4,5 @@ import com.example.facetimeclonecompose.presentation.loginScreen.uiStates.InputF
 
 data class ParticipantsInputFieldUiState(
     val emailFieldUiState:InputFieldUiState = InputFieldUiState(),
-    val addedParticipantsUiState:List<RoomInvitedUserUiState> = emptyList()
+    val addedParticipantsUiState:List<ParticipantUserUiState> = emptyList()
 )

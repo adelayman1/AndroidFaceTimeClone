@@ -1,21 +1,21 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package com.example.facetimeclonecompose.presentation.createRoomScreen.components
 //
-import android.util.Log
 import android.view.KeyEvent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -25,12 +25,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -38,28 +37,28 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.ParticipantsInputFieldUiState
-import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.RoomInvitedUserUiState
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGraySecond
 import com.example.facetimeclonecompose.presentation.ui.theme.Gray60
+import com.example.facetimeclonecompose.presentation.ui.theme.Red
+import com.example.facetimeclonecompose.presentation.ui.theme.UbuntuFont
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldContent(
     state: ParticipantsInputFieldUiState,
-    onValueChanged: (TextFieldValue) -> Unit,
+    onValueChanged: (String) -> Unit,
     focusRequester: FocusRequester,
-    onClickEnter: () -> Unit,
-    onChipClick: (Int) -> Unit
+    onClickEnter: () -> Unit
 ) {
-    Box {
+    Column {
         // TODO("EDIT THAT")
 //        if (textFieldValue.text.isEmpty() && listOfChips.isEmpty()) {
 //            Text(
@@ -76,7 +75,50 @@ fun TextFieldContent(
 //                modifier = Modifier.align(alignment = Alignment.CenterStart)
 //            )
 //        }
+        TextField(
+            value = state.emailFieldUiState.text,
+            onValueChange = onValueChanged,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 5.sdp)
+                .focusRequester(focusRequester)
+                .onKeyEvent {
+                    if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+                        focusRequester.requestFocus()
+                        true
+                    }
+                    false
+                },
+            leadingIcon = { Text(text = "To ", color = Gray60) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Email
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    onClickEnter()
+                    focusRequester.requestFocus()
+                }
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = DarkGray,
+                textColor = Color.White
+            ),
 
+            )
+        AnimatedVisibility(state.emailFieldUiState.errorMessage != null) {
+            Text(
+                modifier = Modifier
+                    .padding(start = 20.sdp, top = 3.sdp, bottom = 6.sdp)
+                    .fillMaxWidth(),
+                text = state.emailFieldUiState.errorMessage ?: "",
+                fontFamily = UbuntuFont,
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.ssp,
+                color = Red
+            )
+        }
         FlowRow(
             modifier = Modifier
                 .background(DarkGray)
@@ -85,18 +127,16 @@ fun TextFieldContent(
                 .padding(start = 10.sdp),
             horizontalArrangement = Arrangement.spacedBy(5.sdp),
             verticalAlignment = Alignment.CenterVertically
-
-//            main = 5.dp
         ) {
-            Text(text = "To", color = Gray60)
-            repeat(times = state.addedParticipantsUiState.size) { index ->
+//            Text(text = "To", color = Gray60)
+            state.addedParticipantsUiState.forEach { participant ->
                 InputChip(
-                    onClick = { onChipClick(index) },
+                    onClick = { participant.onDelete() },
                     selected = true,
                     label = {
                         Text(
-                            text = state.addedParticipantsUiState[index].userEmail,
-                            color = if (state.addedParticipantsUiState[index].userExist) Color.White else Color.Red
+                            text = participant.userEmail,
+                            color = if (participant.userExist) Color.White else Color.Red
                         )
                     },
                     modifier = Modifier.wrapContentWidth(),
@@ -111,7 +151,7 @@ fun TextFieldContent(
                                 .background(Color.White)
                                 .padding(3.dp)
                         ) {
-                            if (state.addedParticipantsUiState[index].isLoading) {
+                            if (participant.isLoading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.then(Modifier.size(12.dp))
                                 )
@@ -129,57 +169,57 @@ fun TextFieldContent(
                 )
             }
 
-            BasicTextField( //TODO("EDIT")
-                value = TextFieldValue(state.emailFieldUiState.text),
-                onValueChange = {
-                    onValueChanged(it)
-                },
-                modifier = Modifier
-                    .padding(start = 5.sdp)
-                    .focusRequester(focusRequester)
-                    .onKeyEvent {
-                        if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-                            focusRequester.requestFocus()
-                            true
-                        }
-                        false
-                    },
-                textStyle = LocalTextStyle.current.copy(color = Color.White),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .defaultMinSize(minHeight = 48.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        Box(
-                            modifier = Modifier.wrapContentWidth(),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .defaultMinSize(minWidth = 4.dp)
-                                    .wrapContentWidth(),
-                            ) {
-                                innerTextField()
-                            }
-                        }
-                    }
-                },
-                readOnly = false,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Email
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        onClickEnter()
-                        focusRequester.requestFocus()
-                    }
-                )
-            )
+            /* BasicTextField( //TODO("EDIT")
+                 value = TextFieldValue(state.emailFieldUiState.text),
+                 onValueChange = {
+                     onValueChanged(it)
+                 },
+                 modifier = Modifier
+                     .padding(start = 5.sdp)
+                     .focusRequester(focusRequester)
+                     .onKeyEvent {
+                         if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+                             focusRequester.requestFocus()
+                             true
+                         }
+                         false
+                     },
+                 textStyle = LocalTextStyle.current.copy(color = Color.White),
+                 singleLine = true,
+                 decorationBox = { innerTextField ->
+                     Row(
+                         modifier = Modifier
+                             .wrapContentWidth()
+                             .defaultMinSize(minHeight = 48.dp),
+                         verticalAlignment = Alignment.CenterVertically,
+                         horizontalArrangement = Arrangement.Start
+                     ) {
+                         Box(
+                             modifier = Modifier.wrapContentWidth(),
+                             contentAlignment = Alignment.CenterStart
+                         ) {
+                             Row(
+                                 modifier = Modifier
+                                     .defaultMinSize(minWidth = 4.dp)
+                                     .wrapContentWidth(),
+                             ) {
+                                 innerTextField()
+                             }
+                         }
+                     }
+                 },
+                 readOnly = false,
+                 keyboardOptions = KeyboardOptions(
+                     imeAction = ImeAction.Done,
+                     keyboardType = KeyboardType.Email
+                 ),
+                 keyboardActions = KeyboardActions(
+                     onDone = {
+                         onClickEnter()
+                         focusRequester.requestFocus()
+                     }
+                 )
+             )*/
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.facetimeclonecompose.presentation.createRoomScreen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,13 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.facetimeclonecompose.domain.usecases.CreateAudioRoomUseCase
 import com.example.facetimeclonecompose.domain.usecases.CreateVideoRoomUseCase
 import com.example.facetimeclonecompose.domain.usecases.GetUserProfileUseCase
-import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
+import com.example.facetimeclonecompose.domain.usecases.ValidateEmailUseCase
+import com.example.facetimeclonecompose.domain.utilities.InvalidInputTextException
 import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.NewRoomUiEvent
 import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.NewRoomUiState
-import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.RoomInvitedUserUiState
-import com.example.facetimeclonecompose.presentation.homeScreen.HomeViewModel
-import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.RoomsUiState
-import com.example.facetimeclonecompose.presentation.registerScreen.uiStates.RegisterUiEvent
+import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.ParticipantUserUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,13 +25,14 @@ import javax.inject.Inject
 class CreateRoomViewModel @Inject constructor(
     private val createAudioRoomUseCase: CreateAudioRoomUseCase,
     private val createVideoRoomUseCase: CreateVideoRoomUseCase,
-    private val getUserProfileUseCase: GetUserProfileUseCase
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val validateEmailUseCase: ValidateEmailUseCase
 ) : ViewModel() {
     var createRoomUiState by mutableStateOf(NewRoomUiState(isLoading = false))
         private set;
     private var _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
-
+// TODO("EMAIL VALIDATE AND EMAIL ERROR HANDLE AND")
     private fun createAudioRoom() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -42,10 +40,10 @@ class CreateRoomViewModel @Inject constructor(
                 val participantsEmails: List<String> =
                     createRoomUiState.participantsUiState.addedParticipantsUiState.map { userItemUiState -> userItemUiState.userEmail }
                 createAudioRoomUseCase(participantsEmails).also {
-                    _eventFlow.emit(UiEvent.CallCreatedSuccessfully)
+                    _eventFlow.emit(UiEvent.AudioCallCreatedSuccessfully(userName = getUserProfileUseCase().userName,roomKey=it.roomId))
                 }
             } catch (e: Exception) {
-                createRoomUiState = createRoomUiState.copy(isLoading = true)
+                createRoomUiState = createRoomUiState.copy(isLoading = false)
                 _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
             }
         }
@@ -58,10 +56,10 @@ class CreateRoomViewModel @Inject constructor(
                 val participantsEmails: List<String> =
                     createRoomUiState.participantsUiState.addedParticipantsUiState.map { userItemUiState -> userItemUiState.userEmail }
                 createVideoRoomUseCase(participantsEmails).also {
-                    _eventFlow.emit(UiEvent.CallCreatedSuccessfully)
+                    _eventFlow.emit(UiEvent.VideoCallCreatedSuccessfully(userName = getUserProfileUseCase().userName, roomKey = it.roomId))
                 }
             } catch (e: Exception) {
-                createRoomUiState = createRoomUiState.copy(isLoading = true)
+                createRoomUiState = createRoomUiState.copy(isLoading = false)
                 _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
             }
         }
@@ -71,19 +69,41 @@ class CreateRoomViewModel @Inject constructor(
     private fun addUser(userEmail: String) {
         viewModelScope.launch {
             try {
-                val isUserAdded = createRoomUiState.participantsUiState.addedParticipantsUiState.any { it.userEmail.trim() == userEmail.trim() }
-                if (isUserAdded){
+                val isUserAdded =
+                    createRoomUiState.participantsUiState.addedParticipantsUiState.any { it.userEmail.trim() == userEmail.trim() }
+                if (isUserAdded) {
                     _eventFlow.emit(UiEvent.ShowMessage("You have added this user"))
+                    return@launch
+                }
+                val emailValidationResult = validateEmailUseCase(createRoomUiState.participantsUiState.emailFieldUiState.text)
+                if (emailValidationResult.error != null) {
+                    createRoomUiState = createRoomUiState.copy(
+                        participantsUiState = createRoomUiState.participantsUiState.copy(
+                            emailFieldUiState = createRoomUiState.participantsUiState.emailFieldUiState.copy(
+                                errorMessage = emailValidationResult.error
+                            )
+                        ),
+                    )
+                    createRoomUiState = createRoomUiState.copy(isLoading = false)
                     return@launch
                 }
                 val newParticipantsList =
                     createRoomUiState.participantsUiState.addedParticipantsUiState.toMutableList()
                         .also {
                             it.add(
-                                RoomInvitedUserUiState(
+                                ParticipantUserUiState(
                                     userEmail,
                                     userExist = false,
-                                    isLoading = true
+                                    isLoading = true,
+                                    onDelete = {
+                                        createRoomUiState = createRoomUiState.copy(
+                                            participantsUiState = createRoomUiState.participantsUiState.copy(
+                                                addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.filterNot {
+                                                    it.userEmail == userEmail
+                                                })
+                                        )
+                                        updateButtonsEnableState()
+                                    }
                                 )
                             )
                         }
@@ -93,30 +113,49 @@ class CreateRoomViewModel @Inject constructor(
                     )
                 )
                 // TODO()
-                getUserProfileUseCase(userEmail)
-                val finalParticipantsList = createRoomUiState.participantsUiState.addedParticipantsUiState
-                finalParticipantsList.find { it.userEmail.trim() == userEmail.trim() }!!.let {
-                    it.isLoading = false
-                    it.userExist = true
+                getUserProfileUseCase(userEmail).apply {
+                    createRoomUiState = createRoomUiState.copy(
+                        participantsUiState = createRoomUiState.participantsUiState.copy(
+                            addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.map {
+                                if (it.userEmail == userEmail)
+                                    it.copy(isLoading = false, userExist = true)
+                                else
+                                    it
+                            })
+                    )
+                    updateButtonsEnableState()
                 }
+
+
+            } catch (e: InvalidInputTextException) {
                 createRoomUiState = createRoomUiState.copy(
                     participantsUiState = createRoomUiState.participantsUiState.copy(
-                        addedParticipantsUiState = finalParticipantsList
-                    )
+                        emailFieldUiState = createRoomUiState.participantsUiState.emailFieldUiState.copy(
+                            errorMessage = e.message
+                        )
+                    ),
                 )
-
-
             } catch (e: Exception) {
-                val newParticipantsList = createRoomUiState.participantsUiState.addedParticipantsUiState
-                newParticipantsList.find { it.userEmail.trim() == userEmail.trim() }!!.let {
-                    it.isLoading = false
-                    it.userExist = false
-                }
                 createRoomUiState = createRoomUiState.copy(
                     participantsUiState = createRoomUiState.participantsUiState.copy(
-                        addedParticipantsUiState =  newParticipantsList
-                    )
+                        addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.map {
+                            if (it.userEmail == userEmail)
+                                it.copy(isLoading = false, userExist = false)
+                            else
+                                it
+                        })
                 )
+                updateButtonsEnableState()
+//                val newParticipantsList = createRoomUiState.participantsUiState.addedParticipantsUiState
+//                newParticipantsList.find { it.userEmail.trim() == userEmail.trim() }!!.let {
+//                    it.isLoading = false
+//                    it.userExist = false
+//                }
+//                createRoomUiState = createRoomUiState.copy(
+//                    participantsUiState = createRoomUiState.participantsUiState.copy(
+//                        addedParticipantsUiState =  newParticipantsList
+//                    )
+//                )
                 //TODO()
 //                createRoomUiState = createRoomUiState.copy(
 //                    participantsUiState = createRoomUiState.participantsUiState.copy(
@@ -150,7 +189,6 @@ class CreateRoomViewModel @Inject constructor(
                 createRoomUiState = createRoomUiState.copy(
                     participantsUiState = createRoomUiState.participantsUiState.copy(
                         emailFieldUiState = createRoomUiState.participantsUiState.emailFieldUiState.copy(
-                            errorMessage = null,
                             text = ""
                         )
                     )
@@ -159,10 +197,13 @@ class CreateRoomViewModel @Inject constructor(
             }
         }
     }
-
+    private fun updateButtonsEnableState(){
+        createRoomUiState = createRoomUiState.copy(isButtonsEnabled = !createRoomUiState.participantsUiState.addedParticipantsUiState.any { !it.userExist })
+    }
 
     sealed class UiEvent {
         data class ShowMessage(var message: String) : UiEvent()
-        object CallCreatedSuccessfully : UiEvent()
+        data class AudioCallCreatedSuccessfully(var userName: String,var roomKey:String) : UiEvent()
+        data class VideoCallCreatedSuccessfully(var userName: String,var roomKey:String) : UiEvent()
     }
 }
