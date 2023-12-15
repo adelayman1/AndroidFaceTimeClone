@@ -1,6 +1,7 @@
 package com.example.facetimeclonecompose.presentation.homeScreen.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -58,7 +59,11 @@ fun RoomCard(
         colors = CardDefaults.cardColors(containerColor = LightGray)
     ) {
         Row(
-            modifier = Modifier.padding(top = 2.sdp),
+            modifier = Modifier
+                .padding(top = 2.sdp)
+                .clickable {
+                    roomItemUiState.onEditCall()
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(

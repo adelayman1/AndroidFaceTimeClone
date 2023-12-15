@@ -1,6 +1,8 @@
 package com.example.facetimeclonecompose.data.sources.remote.dataSources
 
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.EditFcmTokenRequestModel
+import com.example.facetimeclonecompose.data.sources.remote.requestModels.GetUserProfileByEmailRequestModel
+import com.example.facetimeclonecompose.data.sources.remote.requestModels.GetUserProfileByIdRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.LoginRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.RegisterRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.responseModels.BaseApiResponse
@@ -42,11 +44,23 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
             }
         }
 
-    suspend fun getProfileData(): BaseApiResponse<UserResponseModel> =
+    suspend fun getProfileDataByID(userID:String): BaseApiResponse<UserResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.get {
                 url("$BASE_URL/$USER_ENDPOINT/profile")
                 header("No-Authorization","false")
+                body = GetUserProfileByIdRequestModel(userId=userID)
+                contentType(ContentType.Application.Json)
+            }
+        }
+
+
+    suspend fun getProfileDataByEmail(userEmail:String): BaseApiResponse<UserResponseModel> =
+        withContext(Dispatchers.IO) {
+            httpClient.get {
+                url("$BASE_URL/$USER_ENDPOINT/profile/email")
+                header("No-Authorization","false")
+                body = GetUserProfileByEmailRequestModel(email=userEmail)
                 contentType(ContentType.Application.Json)
             }
         }

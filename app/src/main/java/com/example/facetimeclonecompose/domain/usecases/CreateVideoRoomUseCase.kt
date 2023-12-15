@@ -14,24 +14,26 @@ class CreateVideoRoomUseCase @Inject constructor(
     private val roomRepository: RoomRepository,
     private val validateEmailUseCase: ValidateEmailUseCase
 ) {
-    suspend operator fun invoke(participantsEmails: List<String>): RoomModel {
+    suspend operator fun invoke(participantsEmails: List<String>? = null): RoomModel {
         if (!userRepository.isUserLoggedIn())
             throw UserNotFoundException()
         if (!userRepository.isUserAccountVerified())
             throw UserNotVerifiedException()
-        validateParticipantsEmails(participantsEmails)
+        if (participantsEmails != null)
+            validateParticipantsEmails(participantsEmails)
         return roomRepository.createRoom(RoomTypeModel.FACETIME, participantsEmails)!!
     }
 
-    private fun validateParticipantsEmails(participantsEmails: List<String>) {
-        participantsEmails.forEach { participantEmail ->
-            validateEmail(participantEmail)
+        private fun validateParticipantsEmails(participantsEmails: List<String>) {
+            participantsEmails.forEach { participantEmail ->
+                validateEmail(participantEmail)
+            }
         }
-    }
-    private fun validateEmail(email: String) {
-        val validateEmailResult = validateEmailUseCase(email)
-        if (!validateEmailResult.isFieldDataValid()) throw InvalidInputTextException(
-            validateEmailResult.error ?: ""
-        )
-    }
+
+        private fun validateEmail(email: String) {
+            val validateEmailResult = validateEmailUseCase(email)
+            if (!validateEmailResult.isFieldDataValid()) throw InvalidInputTextException(
+                validateEmailResult.error ?: ""
+            )
+        }
 }

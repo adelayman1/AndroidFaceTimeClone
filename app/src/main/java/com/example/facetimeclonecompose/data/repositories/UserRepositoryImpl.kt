@@ -27,6 +27,7 @@ class UserRepositoryImpl @Inject constructor(
                 userLocalDataSource.saveUserToken(userToken)
             } ?: throw Exception("UserToken not found")
             userLocalDataSource.editUserVerifyState(it.isVerified)
+            userLocalDataSource.saveUserId(it.userID)
             it.toUserModel()
         }
 
@@ -46,12 +47,21 @@ class UserRepositoryImpl @Inject constructor(
                 userLocalDataSource.saveUserToken(userToken)
                 userLocalDataSource.editUserVerifyState(false)
             } ?: throw Exception("UserToken not found")
+            userLocalDataSource.saveUserId(it.userID)
             it.toUserModel()
         }
 
-    override suspend fun getUserProfileData(): UserModel = makeRequestAndHandleErrors {
-        userRemoteDataSource.getProfileData()
-    }?.toUserModel() ?: throw Exception("User not found")
+    override suspend fun getUserProfileDataByEmail(userEmail: String): UserModel =
+        makeRequestAndHandleErrors {
+            userRemoteDataSource.getProfileDataByEmail(userEmail)
+        }?.toUserModel() ?: throw UserNotFoundException()
+
+    override suspend fun getUserProfileData(): UserModel {
+       return makeRequestAndHandleErrors {
+            userRemoteDataSource.getProfileDataByID(getUserID())
+        }?.toUserModel() ?: throw UserNotFoundException()
+    }
+
 
     override suspend fun sendVerificationEmail() {
         externalScope.launch {
@@ -97,5 +107,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun isUserAccountVerified(): Boolean {
         return userLocalDataSource.getUserVerifiedState()
+    }
+
+    override suspend fun getUserID(): String {
+        if (userLocalDataSource.getUserID() == GUEST_USER) throw UserNotFoundException()
+        else return userLocalDataSource.getUserID()
     }
 }

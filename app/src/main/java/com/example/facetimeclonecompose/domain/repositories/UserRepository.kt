@@ -7,7 +7,7 @@ interface UserRepository {
 
     suspend fun createNewAccount(name: String, email: String, password: String): UserModel?
 
-    suspend fun getUserProfileData(): UserModel
+//    suspend fun getUserProfileData(): UserModel
 
     suspend fun sendVerificationEmail()
 
@@ -21,4 +21,7 @@ interface UserRepository {
 
     suspend fun isUserAccountVerified(): Boolean
 
+    suspend fun getUserProfileDataByEmail(userEmail: String): UserModel
+    suspend fun getUserProfileData(): UserModel
+    suspend fun getUserID(): String?
 }

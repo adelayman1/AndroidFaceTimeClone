@@ -21,9 +21,9 @@ class GetUserRoomsUseCase @Inject constructor(
         val allRooms = roomRepository.getUserRooms()
         if (allRooms != null) {
             for (room in allRooms) {
-                if (room.isLinkRoom()) {
+                if (!room.isLinkRoom()) {
                     if (room.isRoomCreatedByMe()) {
-                        if (!room.isRoomHasParticipants()) {
+                        if (room.isRoomHasParticipants()) {
                             val firstParticipantName = room.participants!![0].userName
                             newRooms.add(
                                 RoomModel(
@@ -61,14 +61,14 @@ class GetUserRoomsUseCase @Inject constructor(
     }
 
     private fun RoomModel.isLinkRoom(): Boolean {
-        return this.roomType != "link"
+        return this.roomType == "link"
     }
 
     private suspend fun RoomModel.isRoomCreatedByMe(): Boolean {
-        return this.roomAuthor == userRepository.getUserProfileData().userId
+        return this.roomAuthor == userRepository.getUserID()
     }
 
-    private suspend fun RoomModel.isRoomHasParticipants(): Boolean {
-        return participants.isNullOrEmpty()
+    private fun RoomModel.isRoomHasParticipants(): Boolean {
+        return !participants.isNullOrEmpty()
     }
 }

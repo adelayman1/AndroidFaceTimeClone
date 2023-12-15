@@ -11,8 +11,17 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Green = Color(0xFF35c759)
+val GreenDark = Color(0xFF21492c)
+val GreenLight = Color(0xFF2ed158)
 
 val LightGray = Color(0xFF323232)
-val DarkGray = Color(0xFF141414)
 val Gray60 = Color(0xFF6c6c6c)
 val Gray30 = Color(0xFF959597)
+
+val DarkGray = Color(0xFF141414)
+val DarkGraySecond = Color(0xFF1c1c1d)
+val GrayText = Color(0xFF797988)
+val BorderGray = Color(0xFF323232)
+val TextHint = Color(0xFF756F6F)
+val LightButtonColor = Color(0xFFBFB8B8)
+val Red = Color(0xFFFF4842)

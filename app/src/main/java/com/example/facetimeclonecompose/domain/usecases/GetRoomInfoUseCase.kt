@@ -28,7 +28,7 @@ class GetRoomInfoUseCase @Inject constructor(
     }
 
     private suspend fun isUserHasAccess(): Boolean {
-        userId = userRepository.getUserProfileData().userId
+        userId = userRepository.getUserID()
         return if(roomInfo != null){
             (isUserAuthorOfRoom() && isUserParticipantInRoom())
         }else

@@ -1,10 +1,12 @@
 package com.example.facetimeclonecompose.presentation.homeScreen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.usecases.CreateLinkRoomUseCase
 import com.example.facetimeclonecompose.domain.usecases.GetUserRoomsUseCase
 import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.HomeUiEvent
@@ -36,7 +38,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 roomsUiState = roomsUiState.copy(isLoading = true)
-                val allRooms = getUserRoomsUseCase()
+                val allRooms =
+                    listOf<RoomModel>(RoomModel("q", 1, "qq", "qqq", "qq", null, "1688352007025"),RoomModel("q2", 1, "qq", "qqq", "qq", null, "1688352007025"))
                 if (allRooms != null) {
                     val newRoomsList = allRooms.map { room ->
                         RoomItemUiState(
@@ -47,6 +50,11 @@ class HomeViewModel @Inject constructor(
                             itemPosition = roomItemPositionUtil.getRoomItemPosition(room, allRooms),
                             roomTypeId = room.roomTypeId,
                             roomType = room.roomType,
+                            onEditCall = {
+                                roomsUiState = roomsUiState.copy(rooms = roomsUiState.rooms.map {
+                                    roomsUiState.rooms.find { it.roomId == room.roomId }!!.copy(time ="1666216800000")
+                                })
+                            }
                         )
                     }
                     println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyss${newRoomsList.get(0)}")

@@ -1,6 +1,7 @@
 package com.example.facetimeclonecompose.data.sources.local.dataSources
 
 import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
+import com.example.facetimeclonecompose.data.utilities.Constants.USER_ID_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_TOKEN_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_VERIFIED_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.PreferenceDataStoreHelper
@@ -27,5 +28,11 @@ class UserLocalDataSource @Inject constructor(private var dataStore: PreferenceD
 
     suspend fun editUserVerifyState(isVerified: Boolean) = withContext(Dispatchers.IO) {
         dataStore.putPreference(USER_VERIFIED_PREFERENCE_DATA_STORE_KEY, isVerified)
+    }
+    suspend fun saveUserId(userID: String) = withContext(Dispatchers.IO) {
+        dataStore.putPreference(USER_ID_PREFERENCE_DATA_STORE_KEY, userID)
+    }
+    suspend fun getUserID(): String = withContext(Dispatchers.IO) {
+        dataStore.getFirstPreference(USER_ID_PREFERENCE_DATA_STORE_KEY, GUEST_USER)
     }
 }

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.facetimeclonecompose"
-        minSdk 24
+        minSdk 25
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.5.1'
@@ -94,4 +93,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0"
     //data store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //jitsi-meet
+    implementation ('org.jitsi.react:jitsi-meet-sdk:7.0.1') { transitive = true }
+
+
+    implementation 'androidx.compose.foundation:foundation-layout:1.4.0-alpha04'
 }

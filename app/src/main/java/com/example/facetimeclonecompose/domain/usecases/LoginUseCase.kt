@@ -12,7 +12,7 @@ class LoginUseCase @Inject constructor(
     private val validatePasswordUseCase: ValidatePasswordUseCase
 ) {
     suspend operator fun invoke(email: String, password: String): UserModel {
-        if (!userRepository.isUserLoggedIn())
+        if (userRepository.isUserLoggedIn())
             throw UserLoggedInException()
         validateFields(email, password)
         return userRepository.login(email = email, password = password)!!

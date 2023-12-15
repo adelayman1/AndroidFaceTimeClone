@@ -6,5 +6,6 @@ data class RoomItemUiState(
     var time:String,
     var itemPosition:ItemPosition,
     var roomTypeId:Int,
-    var roomType:String
+    var roomType:String,
+    val onEditCall: () -> Unit//TODO()
 )

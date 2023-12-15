@@ -12,17 +12,17 @@ class CreateAccountUseCase @Inject constructor(
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateUserNameUseCase: ValidateUserNameUseCase
 ) {
-    suspend operator fun invoke(userName: String, email: String, password: String): UserModel {
-        if (userRepository.isUserLoggedIn())
-            throw UserLoggedInException()
-        validateFields(userName, email, password)
+    suspend operator fun invoke(userName: String, email: String, password: String,confirmPassword:String): UserModel {
+//        if (userRepository.isUserLoggedIn())
+//            throw UserLoggedInException()TODO("EDIT")
+        validateFields(userName, email, password,confirmPassword)
         return userRepository.createNewAccount(name = userName, email = email, password = password)!!
     }
 
-    private fun validateFields(userName: String, email: String, password: String) {
+    private fun validateFields(userName: String, email: String, password: String,confirmPassword: String) {
         validateUserName(userName)
         validateEmail(email)
-        validatePassword(password)
+        validatePassword(password,confirmPassword)
     }
 
     private fun validateUserName(userName: String) {
@@ -39,10 +39,13 @@ class CreateAccountUseCase @Inject constructor(
         )
     }
 
-    private fun validatePassword(password: String) {
+    private fun validatePassword(password: String,confirmPassword: String) {
         val validatePasswordResult = validatePasswordUseCase(password)
         if (!validatePasswordResult.isFieldDataValid()) throw InvalidInputTextException(
             validatePasswordResult.error ?: ""
+        )
+        if(password != confirmPassword) throw InvalidInputTextException(
+            "passwords are not the same"
         )
     }
 }
