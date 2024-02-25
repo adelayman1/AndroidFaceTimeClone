@@ -13,13 +13,11 @@ import javax.inject.Inject
 class CreateAudioRoomUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val roomRepository: RoomRepository,
-    private val validateEmailUseCase: ValidateEmailUseCase
+    private val validateEmailUseCase: ValidateEmailUseCase,
+    private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase
 ) {
     suspend operator fun invoke(participantsEmails: List<String>? = null): RoomModel {
-        if (!userRepository.isUserLoggedIn())
-            throw UserNotFoundException()
-        if (!userRepository.isUserAccountVerified())
-            throw UserNotVerifiedException()
+        checkIsAccountValidUseCase()
         if (participantsEmails != null)
             validateParticipantsEmails(participantsEmails)
         return roomRepository.createRoom(RoomTypeModel.AUDIO,participantsEmails)!!

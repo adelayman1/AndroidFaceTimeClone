@@ -60,7 +60,7 @@ fun RegisterScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                RegisterViewModel.UiEvent.RegisterSuccess -> navController.navigate(Screen.HomeScreen.route)//TODO("EDIT")
+                RegisterViewModel.UiEvent.RegisterSuccess -> navController.navigate(Screen.OtpCodeScreen.route)
                 is RegisterViewModel.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.error)
             }
         }

@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -63,6 +64,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    // FCM
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
     //sdp & ssp
     implementation 'com.github.Kaaveh:sdp-compose:1.1.0'
     //hilt

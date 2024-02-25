@@ -6,16 +6,12 @@ import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
 import com.example.facetimeclonecompose.domain.utilities.UserNotVerifiedException
 import javax.inject.Inject
 
-class GetUserProfileUseCase @Inject constructor(private val userRepository: UserRepository) {
+class GetUserProfileUseCase @Inject constructor(private val userRepository: UserRepository,private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase) {
     suspend operator fun invoke(userEmail:String?=null): UserModel {
-//        if (!userRepository.isUserLoggedIn())
-//            throw UserNotFoundException()
-//        if (!userRepository.isUserAccountVerified())
-//            throw UserNotVerifiedException()
-        //TODO("DELETE")
-        if(userEmail==null)
-            return userRepository.getUserProfileData()//My Profile
+        checkIsAccountValidUseCase()
+        return if(userEmail==null)
+            userRepository.getUserProfileDataById()//My Profile
         else
-            return userRepository.getUserProfileDataByEmail(userEmail)
+            userRepository.getUserProfileDataByEmail(userEmail)
     }
 }

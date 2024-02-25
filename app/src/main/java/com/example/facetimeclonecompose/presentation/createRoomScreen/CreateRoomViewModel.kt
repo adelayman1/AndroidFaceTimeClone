@@ -32,15 +32,19 @@ class CreateRoomViewModel @Inject constructor(
         private set;
     private var _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
-// TODO("EMAIL VALIDATE AND EMAIL ERROR HANDLE AND")
+
     private fun createAudioRoom() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 createRoomUiState = createRoomUiState.copy(isLoading = true)
-                val participantsEmails: List<String> =
-                    createRoomUiState.participantsUiState.addedParticipantsUiState.map { userItemUiState -> userItemUiState.userEmail }
+                val participantsEmails: List<String> =  getParticipantsEmails()
                 createAudioRoomUseCase(participantsEmails).also {
-                    _eventFlow.emit(UiEvent.AudioCallCreatedSuccessfully(userName = getUserProfileUseCase().userName,roomKey=it.roomId))
+                    _eventFlow.emit(
+                        UiEvent.AudioCallCreatedSuccessfully(
+                            userName = getUserProfileUseCase().userName,
+                            roomKey = it.roomId
+                        )
+                    )
                 }
             } catch (e: Exception) {
                 createRoomUiState = createRoomUiState.copy(isLoading = false)
@@ -53,10 +57,14 @@ class CreateRoomViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 createRoomUiState = createRoomUiState.copy(isLoading = true)
-                val participantsEmails: List<String> =
-                    createRoomUiState.participantsUiState.addedParticipantsUiState.map { userItemUiState -> userItemUiState.userEmail }
+                val participantsEmails: List<String> = getParticipantsEmails()
                 createVideoRoomUseCase(participantsEmails).also {
-                    _eventFlow.emit(UiEvent.VideoCallCreatedSuccessfully(userName = getUserProfileUseCase().userName, roomKey = it.roomId))
+                    _eventFlow.emit(
+                        UiEvent.VideoCallCreatedSuccessfully(
+                            userName = getUserProfileUseCase().userName,
+                            roomKey = it.roomId
+                        )
+                    )
                 }
             } catch (e: Exception) {
                 createRoomUiState = createRoomUiState.copy(isLoading = false)
@@ -65,16 +73,15 @@ class CreateRoomViewModel @Inject constructor(
         }
     }
 
-
     private fun addUser(userEmail: String) {
         viewModelScope.launch {
             try {
-                val isUserAdded =
-                    createRoomUiState.participantsUiState.addedParticipantsUiState.any { it.userEmail.trim() == userEmail.trim() }
-                if (isUserAdded) {
+                if (isUserInParticipantsList(userEmail)) {
                     _eventFlow.emit(UiEvent.ShowMessage("You have added this user"))
                     return@launch
                 }
+                // TODO(race condition check and coroutiens cancellable and best practisces check)
+
                 val emailValidationResult = validateEmailUseCase(createRoomUiState.participantsUiState.emailFieldUiState.text)
                 if (emailValidationResult.error != null) {
                     createRoomUiState = createRoomUiState.copy(
@@ -87,42 +94,10 @@ class CreateRoomViewModel @Inject constructor(
                     createRoomUiState = createRoomUiState.copy(isLoading = false)
                     return@launch
                 }
-                val newParticipantsList =
-                    createRoomUiState.participantsUiState.addedParticipantsUiState.toMutableList()
-                        .also {
-                            it.add(
-                                ParticipantUserUiState(
-                                    userEmail,
-                                    userExist = false,
-                                    isLoading = true,
-                                    onDelete = {
-                                        createRoomUiState = createRoomUiState.copy(
-                                            participantsUiState = createRoomUiState.participantsUiState.copy(
-                                                addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.filterNot {
-                                                    it.userEmail == userEmail
-                                                })
-                                        )
-                                        updateButtonsEnableState()
-                                    }
-                                )
-                            )
-                        }
-                createRoomUiState = createRoomUiState.copy(
-                    participantsUiState = createRoomUiState.participantsUiState.copy(
-                        addedParticipantsUiState = newParticipantsList
-                    )
-                )
-                // TODO()
+
+                addNewParticipantToList(userEmail)
                 getUserProfileUseCase(userEmail).apply {
-                    createRoomUiState = createRoomUiState.copy(
-                        participantsUiState = createRoomUiState.participantsUiState.copy(
-                            addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.map {
-                                if (it.userEmail == userEmail)
-                                    it.copy(isLoading = false, userExist = true)
-                                else
-                                    it
-                            })
-                    )
+                    updateParticipantState(userEmail,true)
                     updateButtonsEnableState()
                 }
 
@@ -135,36 +110,10 @@ class CreateRoomViewModel @Inject constructor(
                         )
                     ),
                 )
+                updateParticipantState(userEmail,false)
             } catch (e: Exception) {
-                createRoomUiState = createRoomUiState.copy(
-                    participantsUiState = createRoomUiState.participantsUiState.copy(
-                        addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.map {
-                            if (it.userEmail == userEmail)
-                                it.copy(isLoading = false, userExist = false)
-                            else
-                                it
-                        })
-                )
+                updateParticipantState(userEmail,false)
                 updateButtonsEnableState()
-//                val newParticipantsList = createRoomUiState.participantsUiState.addedParticipantsUiState
-//                newParticipantsList.find { it.userEmail.trim() == userEmail.trim() }!!.let {
-//                    it.isLoading = false
-//                    it.userExist = false
-//                }
-//                createRoomUiState = createRoomUiState.copy(
-//                    participantsUiState = createRoomUiState.participantsUiState.copy(
-//                        addedParticipantsUiState =  newParticipantsList
-//                    )
-//                )
-                //TODO()
-//                createRoomUiState = createRoomUiState.copy(
-//                    participantsUiState = createRoomUiState.participantsUiState.copy(
-//                        emailFieldUiState = createRoomUiState.participantsUiState.emailFieldUiState.copy(
-//                            errorMessage = null,
-//                            text = "a"
-//                        )
-//                    )
-//                )
                 _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
             }
         }
@@ -197,13 +146,63 @@ class CreateRoomViewModel @Inject constructor(
             }
         }
     }
-    private fun updateButtonsEnableState(){
-        createRoomUiState = createRoomUiState.copy(isButtonsEnabled = !createRoomUiState.participantsUiState.addedParticipantsUiState.any { !it.userExist })
+
+    private fun addNewParticipantToList(userEmail: String) {
+        val newParticipantsList =
+            createRoomUiState.participantsUiState.addedParticipantsUiState.toMutableList()
+                .also {
+                    it.add(
+                        ParticipantUserUiState(
+                            userEmail,
+                            userExist = false,
+                            isLoading = true,
+                            onDelete = {
+                                createRoomUiState = createRoomUiState.copy(
+                                    participantsUiState = createRoomUiState.participantsUiState.copy(
+                                        addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.filterNot {
+                                            it.userEmail == userEmail
+                                        })
+                                )
+                                updateButtonsEnableState()
+                            }
+                        )
+                    )
+                }
+        createRoomUiState = createRoomUiState.copy(
+            participantsUiState = createRoomUiState.participantsUiState.copy(
+                addedParticipantsUiState = newParticipantsList
+            )
+        )
+    }
+    private fun getParticipantsEmails():List<String>{
+        return createRoomUiState.participantsUiState.addedParticipantsUiState.map { userItemUiState -> userItemUiState.userEmail }
+    }
+    private fun updateParticipantState(userEmail: String, userExists:Boolean){
+        createRoomUiState = createRoomUiState.copy(
+            participantsUiState = createRoomUiState.participantsUiState.copy(
+                addedParticipantsUiState = createRoomUiState.participantsUiState.addedParticipantsUiState.map {
+                    if (it.userEmail == userEmail)
+                        it.copy(isLoading = false, userExist = userExists)
+                    else
+                        it
+                }
+            )
+        )
+    }
+    private fun isUserInParticipantsList(userEmail: String):Boolean{
+        return createRoomUiState.participantsUiState.addedParticipantsUiState.any { it.userEmail.trim() == userEmail.trim() }
+     }
+    private fun updateButtonsEnableState() {
+        createRoomUiState =
+            createRoomUiState.copy(isButtonsEnabled = !createRoomUiState.participantsUiState.addedParticipantsUiState.any { !it.userExist })
     }
 
     sealed class UiEvent {
         data class ShowMessage(var message: String) : UiEvent()
-        data class AudioCallCreatedSuccessfully(var userName: String,var roomKey:String) : UiEvent()
-        data class VideoCallCreatedSuccessfully(var userName: String,var roomKey:String) : UiEvent()
+        data class AudioCallCreatedSuccessfully(var userName: String, var roomKey: String) :
+            UiEvent()
+
+        data class VideoCallCreatedSuccessfully(var userName: String, var roomKey: String) :
+            UiEvent()
     }
 }

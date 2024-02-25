@@ -24,7 +24,10 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideHttpClient(dataStoreHelper: PreferenceDataStoreHelper,coroutineScope: CoroutineScope): HttpClient {
+    fun provideHttpClient(
+        dataStoreHelper: PreferenceDataStoreHelper,
+        coroutineScope: CoroutineScope
+    ): HttpClient {
         return HttpClient(CIO) {
             install(Logging)
             install(WebSockets)
@@ -35,7 +38,8 @@ class NetworkModule {
                 if (!headers.contains("No-Authentication")) {
                     coroutineScope.launch {
                         header(
-                            "Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvdXNlciIsImlzcyI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MC8iLCJ2ZXJpZmllZCI6dHJ1ZSwiZXhwIjoxNzMzNzE2OTcwLCJ1c2VySWQiOiI2M2Q1YjJjOGRiMzkyOTU0ZWNhZTk3MzcifQ.AUFusEf4YpYR5GcU66xo8_5bSPDbMizoDnYQXnAkrHs"
+                            "Authorization",
+                            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvdXNlciIsImlzcyI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MC8iLCJ2ZXJpZmllZCI6dHJ1ZSwiZXhwIjoxNzMzODA4NjM0LCJ1c2VySWQiOiI2M2Q4NTM3YmY3ZjUzMDJjY2UzN2U0YTcifQ.5JgbzO-HhBY1-DEcGPu5xeZ8J1HmPOnMbUMMFOsAED4"
                         )
                     }
                 }
@@ -43,8 +47,9 @@ class NetworkModule {
         }
     }
 }
-
-//TODO("dataStoreHelper.getFirstPreference(
-//                                USER_TOKEN_PREFERENCE_DATA_STORE_KEY,
-//                                GUEST_USER
-//                            )")
+// TODO("VERIFY CHECK")Bearer ${
+//                                dataStoreHelper.getFirstPreference(
+//                                    USER_TOKEN_PREFERENCE_DATA_STORE_KEY,
+//                                    GUEST_USER
+//                                )
+//                            }

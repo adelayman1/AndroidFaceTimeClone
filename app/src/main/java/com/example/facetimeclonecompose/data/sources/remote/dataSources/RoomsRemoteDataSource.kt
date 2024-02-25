@@ -36,7 +36,7 @@ class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClie
             }
         }
 
-    suspend fun deleteRoom(roomId: String): BaseApiResponse<Any> =
+    suspend fun deleteRoom(roomId: String): BaseApiResponse<String> =
         withContext(Dispatchers.IO) {
             httpClient.delete {
                 url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}/$roomId")

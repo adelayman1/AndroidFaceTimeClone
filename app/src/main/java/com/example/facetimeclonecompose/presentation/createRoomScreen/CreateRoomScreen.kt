@@ -120,7 +120,9 @@ fun CreateRoomScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 TextButton(onClick = {
-                    navController.navigate(Screen.HomeScreen.route)
+                    navController.navigate(Screen.HomeScreen.route){
+                        popUpTo(0)
+                    }
                 }) {
                     Text(
                         text = "Cancel",
@@ -137,7 +139,7 @@ fun CreateRoomScreen(
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.size(20.sdp))
-                //TODO(""")
+
                 TextFieldContent(
                     state = viewModel.createRoomUiState.participantsUiState,
                     onValueChanged = { viewModel.onEvent(NewRoomUiEvent.EmailChanged(it)) },
@@ -155,7 +157,6 @@ fun CreateRoomScreen(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .alpha(if (false) 1.0f else 0.5f)
                             .size(32.sdp)
                             .background(
                                 if (viewModel.createRoomUiState.isButtonsEnabled) GreenDark else DisabledColor,

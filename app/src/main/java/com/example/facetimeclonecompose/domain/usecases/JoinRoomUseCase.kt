@@ -10,13 +10,10 @@ import javax.inject.Inject
 
 class JoinRoomUseCase @Inject constructor(
     private val roomRepository: RoomRepository,
-    private val userRepository: UserRepository
+    private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase
 ) {
     suspend operator fun invoke(roomId: String): RoomModel {
-        if (!userRepository.isUserLoggedIn())
-            throw UserNotFoundException()
-        if (!userRepository.isUserAccountVerified())
-            throw UserNotVerifiedException()
+        checkIsAccountValidUseCase()
         return roomRepository.joinRoom(roomId) ?: throw RoomNotFoundException()
     }
 }

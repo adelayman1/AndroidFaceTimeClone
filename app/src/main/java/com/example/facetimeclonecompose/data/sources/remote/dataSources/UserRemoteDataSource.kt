@@ -65,9 +65,9 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
             }
         }
 
-    suspend fun sendVerificationCode(): BaseApiResponse<Any> =
+    suspend fun sendVerificationCode(): BaseApiResponse<String> =
         withContext(Dispatchers.IO) {
-            httpClient.get {
+            httpClient.post {
                 url("$BASE_URL/$USER_ENDPOINT/send-email-code")
                 header("No-Authorization","false")
                 contentType(ContentType.Application.Json)
@@ -78,13 +78,13 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.post {
                 url("$BASE_URL/$USER_ENDPOINT/verify-code")
-                parameter("otp_code",otpCode)
                 header("No-Authorization","false")
+                parameter("otp_code",otpCode.toString())
                 contentType(ContentType.Application.Json)
             }
         }
 
-    suspend fun deleteAccount(): BaseApiResponse<Any> =
+    suspend fun deleteAccount(): BaseApiResponse<String> =
         withContext(Dispatchers.IO) {
             httpClient.delete {
                 url("$BASE_URL/$USER_ENDPOINT")

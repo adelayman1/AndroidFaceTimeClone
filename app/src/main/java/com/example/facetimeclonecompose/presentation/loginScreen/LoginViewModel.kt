@@ -54,6 +54,7 @@ class LoginViewModel @Inject constructor(
                 loginUiState = loginUiState.copy(isLoading = false)
             } else {
                 try {
+                    // TODO("DELETE LOG D")
                     val loginResult = loginUseCase(
                         loginUiState.emailUiState.text,
                         loginUiState.passwordUiState.text

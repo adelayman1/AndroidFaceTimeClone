@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.facetimeclonecompose.presentation.createRoomScreen.CreateRoomScreen
 import com.example.facetimeclonecompose.presentation.homeScreen.HomeScreen
 import com.example.facetimeclonecompose.presentation.loginScreen.LoginScreen
+import com.example.facetimeclonecompose.presentation.otpScreen.OtpCodeScreen
 import com.example.facetimeclonecompose.presentation.registerScreen.RegisterScreen
 import com.example.facetimeclonecompose.presentation.ui.theme.FaceTimeCloneComposeTheme
 import com.example.facetimeclonecompose.presentation.utilities.Screen
@@ -26,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    // TODO(otp screen verify in splash)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     NavHost(
-                        navController = navController, startDestination = Screen.CreateRoomScreen.route
+                        navController = navController, startDestination = Screen.OtpCodeScreen.route
                     ) {
                         composable(route = Screen.HomeScreen.route) {
                             HomeScreen(
@@ -57,6 +59,11 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.CreateRoomScreen.route) {
                             CreateRoomScreen(
+                                navController = navController
+                            )
+                        }
+                        composable(route = Screen.OtpCodeScreen.route) {
+                            OtpCodeScreen(
                                 navController = navController
                             )
                         }

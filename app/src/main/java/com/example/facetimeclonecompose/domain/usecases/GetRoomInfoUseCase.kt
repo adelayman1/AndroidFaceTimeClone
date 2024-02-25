@@ -11,15 +11,13 @@ import javax.inject.Inject
 
 class GetRoomInfoUseCase @Inject constructor(
     private val roomRepository: RoomRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase
 ) {
     private var userId: String? = null
     private var roomInfo: RoomModel? = null
     suspend operator fun invoke(roomId: String): RoomModel {
-        if (!userRepository.isUserLoggedIn())
-            throw UserNotFoundException()
-        if (!userRepository.isUserAccountVerified())
-            throw UserNotVerifiedException()
+        checkIsAccountValidUseCase()
         roomInfo = roomRepository.getRoomInfo(roomId)
         if(!isUserHasAccess())
             throw AccessDeniedException()

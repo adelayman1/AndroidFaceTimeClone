@@ -11,6 +11,7 @@ import com.example.facetimeclonecompose.domain.models.UserModel
 import com.example.facetimeclonecompose.domain.repositories.UserRepository
 import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,7 +57,13 @@ class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.getProfileDataByEmail(userEmail)
         }?.toUserModel() ?: throw UserNotFoundException()
 
-    override suspend fun getUserProfileData(): UserModel {
+    override suspend fun getUserProfileDataById(userId:String): UserModel {
+       return makeRequestAndHandleErrors {
+            userRemoteDataSource.getProfileDataByID(userId)
+        }?.toUserModel() ?: throw UserNotFoundException()
+    }
+
+    override suspend fun getUserProfileDataById(): UserModel {
        return makeRequestAndHandleErrors {
             userRemoteDataSource.getProfileDataByID(getUserID())
         }?.toUserModel() ?: throw UserNotFoundException()
@@ -64,7 +71,7 @@ class UserRepositoryImpl @Inject constructor(
 
 
     override suspend fun sendVerificationEmail() {
-        externalScope.launch {
+        externalScope.launch(NonCancellable){
             makeRequestAndHandleErrors {
                 userRemoteDataSource.sendVerificationCode()
             }
@@ -84,7 +91,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteUserAccount() {
-        externalScope.launch {
+        externalScope.launch(NonCancellable){
             makeRequestAndHandleErrors {
                 userRemoteDataSource.deleteAccount()
             }.also {

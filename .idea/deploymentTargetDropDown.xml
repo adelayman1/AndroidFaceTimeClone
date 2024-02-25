@@ -2,23 +2,26 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="OtpCodeView">
+        <State />
+      </entry>
       <entry key="Preview">
         <State />
       </entry>
       <entry key="app">
         <State>
-          <runningDeviceTargetSelectedWithDropDown>
+          <targetSelectedWithDropDown>
             <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
+              <type value="QUICK_BOOT_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="2866f940" />
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\adel\.android\avd\Pixel_3_API_30.avd" />
                 </Key>
               </deviceKey>
             </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2023-12-15T20:21:33.025747800Z" />
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2023-12-16T04:37:46.306643300Z" />
         </State>
       </entry>
     </value>

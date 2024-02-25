@@ -59,22 +59,6 @@ fun TextFieldContent(
     onClickEnter: () -> Unit
 ) {
     Column {
-        // TODO("EDIT THAT")
-//        if (textFieldValue.text.isEmpty() && listOfChips.isEmpty()) {
-//            Text(
-//                text = "placeholder",
-//                color = if (emphasizePlaceHolder && !isFocused.value) {
-//                    MaterialTheme.colors.onSurface
-//                } else {
-//                    if (MaterialTheme.colors.isLight) {
-//                        LocalCustomColors.current.muted
-//                    } else {
-//                        Color.Gray
-//                    }
-//                },
-//                modifier = Modifier.align(alignment = Alignment.CenterStart)
-//            )
-//        }
         TextField(
             value = state.emailFieldUiState.text,
             onValueChange = onValueChanged,
@@ -168,58 +152,6 @@ fun TextFieldContent(
                     },
                 )
             }
-
-            /* BasicTextField( //TODO("EDIT")
-                 value = TextFieldValue(state.emailFieldUiState.text),
-                 onValueChange = {
-                     onValueChanged(it)
-                 },
-                 modifier = Modifier
-                     .padding(start = 5.sdp)
-                     .focusRequester(focusRequester)
-                     .onKeyEvent {
-                         if (it.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
-                             focusRequester.requestFocus()
-                             true
-                         }
-                         false
-                     },
-                 textStyle = LocalTextStyle.current.copy(color = Color.White),
-                 singleLine = true,
-                 decorationBox = { innerTextField ->
-                     Row(
-                         modifier = Modifier
-                             .wrapContentWidth()
-                             .defaultMinSize(minHeight = 48.dp),
-                         verticalAlignment = Alignment.CenterVertically,
-                         horizontalArrangement = Arrangement.Start
-                     ) {
-                         Box(
-                             modifier = Modifier.wrapContentWidth(),
-                             contentAlignment = Alignment.CenterStart
-                         ) {
-                             Row(
-                                 modifier = Modifier
-                                     .defaultMinSize(minWidth = 4.dp)
-                                     .wrapContentWidth(),
-                             ) {
-                                 innerTextField()
-                             }
-                         }
-                     }
-                 },
-                 readOnly = false,
-                 keyboardOptions = KeyboardOptions(
-                     imeAction = ImeAction.Done,
-                     keyboardType = KeyboardType.Email
-                 ),
-                 keyboardActions = KeyboardActions(
-                     onDone = {
-                         onClickEnter()
-                         focusRequester.requestFocus()
-                     }
-                 )
-             )*/
         }
     }
 }

@@ -12,4 +12,5 @@ class ValidateUserNameUseCase @Inject constructor() {
             return ValidateResult(error = "Please enter valid name")
         return ValidateResult()
     }
+
 }

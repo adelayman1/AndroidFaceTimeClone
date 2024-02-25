@@ -22,6 +22,7 @@ interface UserRepository {
     suspend fun isUserAccountVerified(): Boolean
 
     suspend fun getUserProfileDataByEmail(userEmail: String): UserModel
-    suspend fun getUserProfileData(): UserModel
+    suspend fun getUserProfileDataById(userId:String): UserModel
+    suspend fun getUserProfileDataById(): UserModel
     suspend fun getUserID(): String?
 }

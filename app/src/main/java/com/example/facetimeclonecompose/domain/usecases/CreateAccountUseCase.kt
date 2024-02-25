@@ -13,8 +13,8 @@ class CreateAccountUseCase @Inject constructor(
     private val validateUserNameUseCase: ValidateUserNameUseCase
 ) {
     suspend operator fun invoke(userName: String, email: String, password: String,confirmPassword:String): UserModel {
-//        if (userRepository.isUserLoggedIn())
-//            throw UserLoggedInException()TODO("EDIT")
+        if (userRepository.isUserLoggedIn())
+            throw UserLoggedInException()
         validateFields(userName, email, password,confirmPassword)
         return userRepository.createNewAccount(name = userName, email = email, password = password)!!
     }

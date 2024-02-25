@@ -27,7 +27,7 @@ class ApiException(message: String) : Exception(message)
 
 suspend fun ClientRequestException.handleError(): Exception {
     val content = response.readText(Charset.defaultCharset())
-    return Exception(Json.decodeFromString<BaseApiResponse<Any>>(content).message)
+    return Exception(Json.decodeFromString<BaseApiResponse<String>>(content).message)
 }
 
 fun <T> BaseApiResponse<T>.isDataHasGotSuccessfully() = status && message.isNotBlank()

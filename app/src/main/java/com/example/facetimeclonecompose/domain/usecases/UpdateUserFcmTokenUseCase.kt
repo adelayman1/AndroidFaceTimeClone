@@ -1,20 +1,20 @@
 package com.example.facetimeclonecompose.domain.usecases
 
 import com.example.facetimeclonecompose.domain.models.RoomModel
-import com.example.facetimeclonecompose.domain.models.RoomTypeModel
 import com.example.facetimeclonecompose.domain.repositories.RoomRepository
 import com.example.facetimeclonecompose.domain.repositories.UserRepository
-import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
-import com.example.facetimeclonecompose.domain.utilities.UserNotVerifiedException
+import com.example.facetimeclonecompose.domain.utilities.RoomNotFoundException
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class CreateLinkRoomUseCase @Inject constructor(
+@Singleton    //To inject it into FCM service class
+class UpdateUserFcmTokenUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val roomRepository: RoomRepository,
     private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase
 ) {
-    suspend operator fun invoke(): RoomModel {
+    // TODO("CLEAN CODE CHECK")
+    suspend operator fun invoke(token: String) {
         checkIsAccountValidUseCase()
-        return roomRepository.createRoom(RoomTypeModel.LINK)!!
+        return userRepository.updateUserFcmToken(token)
     }
 }

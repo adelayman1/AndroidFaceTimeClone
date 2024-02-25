@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.lang.NullPointerException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,41 +32,22 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     var roomsUiState by mutableStateOf(RoomsUiState(isLoading = true))
         private set;
+
     private var _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
+
+    private var allRooms: List<RoomModel>? = null
 
     init {
         viewModelScope.launch {
             try {
                 roomsUiState = roomsUiState.copy(isLoading = true)
-                val allRooms =
-                    listOf<RoomModel>(RoomModel("q", 1, "qq", "qqq", "qq", null, "1688352007025"),RoomModel("q2", 1, "qq", "qqq", "qq", null, "1688352007025"))
+                allRooms = getUserRoomsUseCase()
                 if (allRooms != null) {
-                    val newRoomsList = allRooms.map { room ->
-                        RoomItemUiState(
-                            roomId = room.roomId,
-                            roomTitle = room.roomTitle ?: "Empty Room",
-                            time = DateAndTimeUtils.covertTimeToText(room.time)
-                                ?: "HINM", // TODO(CHange HINM)
-                            itemPosition = roomItemPositionUtil.getRoomItemPosition(room, allRooms),
-                            roomTypeId = room.roomTypeId,
-                            roomType = room.roomType,
-                            onEditCall = {
-                                roomsUiState = roomsUiState.copy(rooms = roomsUiState.rooms.map {
-                                    roomsUiState.rooms.find { it.roomId == room.roomId }!!.copy(time ="1666216800000")
-                                }) // TODO()
-                            }
-                        )
-                    }
-                    println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyy yyss${newRoomsList.get(0)}")
-                    roomsUiState = roomsUiState.copy(
-                        rooms = newRoomsList,
-                        isLoading = false
-                    )
+                    updateRoomsUiState()
                 } else {
-                    //TODO("DELETE PRINTS")
-                    println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyy nn")
                     roomsUiState = roomsUiState.copy(isLoading = false, noRooms = true)
+                    _eventFlow.emit(UiEvent.ShowMessage(NullPointerException().message.toString()))
                 }
             } catch (e: Exception) {
                 _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
@@ -94,6 +76,32 @@ class HomeViewModel @Inject constructor(
         when (action) {
             HomeUiEvent.CreateLink -> createLinkRoom()
         }
+    }
+
+    private fun updateRoomsUiState(){
+        val newRoomsList = allRooms!!.map { room ->
+            room.toRoomUiState()
+        }
+        roomsUiState = roomsUiState.copy(
+            rooms = newRoomsList,
+            isLoading = false
+        )
+    }
+    private fun RoomModel.toRoomUiState():RoomItemUiState {
+       return RoomItemUiState(
+            roomId = roomId,
+            roomTitle = roomTitle ?: "Empty Room",
+            time = DateAndTimeUtils.covertTimeToText(time)
+                ?: "HINM", // TODO(CHange HINM)
+            itemPosition = roomItemPositionUtil.getRoomItemPosition(this, allRooms!!),
+            roomTypeId = roomTypeId,
+            roomType = roomType,
+            onEditCall = {
+                roomsUiState = roomsUiState.copy(rooms = roomsUiState.rooms.map {
+                    roomsUiState.rooms.find { it.roomId == roomId }!!.copy(time = "1666216800000")
+                }) // TODO("Handle edit")
+            }
+        )
     }
 
     sealed class UiEvent {
