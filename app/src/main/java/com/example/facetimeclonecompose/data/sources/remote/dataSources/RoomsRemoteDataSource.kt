@@ -1,13 +1,13 @@
 package com.example.facetimeclonecompose.data.sources.remote.dataSources
 
 import com.example.facetimeclonecompose.data.sources.remote.requestModels.CreateRoomRequestModel
+import com.example.facetimeclonecompose.data.sources.remote.requestModels.JoinRoomRequestModel
 import com.example.facetimeclonecompose.data.sources.remote.responseModels.BaseApiResponse
 import com.example.facetimeclonecompose.data.sources.remote.responseModels.RoomResponseModel
 import com.example.facetimeclonecompose.data.utilities.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
@@ -21,18 +21,17 @@ class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClie
         withContext(Dispatchers.IO) {
             httpClient.post {
                 url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}")
-                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
                 body = createRoomRequestModel
             }
         }
 
-    suspend fun joinRoom(roomId: String): BaseApiResponse<RoomResponseModel> =
+    suspend fun joinRoom(joinRoomRequestModel: JoinRoomRequestModel): BaseApiResponse<RoomResponseModel> =
         withContext(Dispatchers.IO) {
             httpClient.post {
-                url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}/$roomId/join")
-                header("No-Authorization", "false")
+                url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}/${joinRoomRequestModel.roomId}/join")
                 contentType(ContentType.Application.Json)
+                body = joinRoomRequestModel
             }
         }
 
@@ -40,7 +39,6 @@ class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClie
         withContext(Dispatchers.IO) {
             httpClient.delete {
                 url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}/$roomId")
-                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
             }
         }
@@ -49,7 +47,6 @@ class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClie
         withContext(Dispatchers.IO) {
             httpClient.get {
                 url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}/$roomId")
-                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
             }
         }
@@ -58,7 +55,6 @@ class RoomsRemoteDataSource @Inject constructor(private val httpClient: HttpClie
         withContext(Dispatchers.IO) {
             httpClient.get {
                 url("${Constants.BASE_URL}/${Constants.ROOMS_ENDPOINT}")
-                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
             }
         }

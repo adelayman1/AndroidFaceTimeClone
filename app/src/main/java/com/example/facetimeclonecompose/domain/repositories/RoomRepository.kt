@@ -13,4 +13,6 @@ interface RoomRepository {
     suspend fun joinRoom(roomId: String): RoomModel?
 
     suspend fun deleteRoom(roomId: String)
+
+    fun launchMeeting(roomId: String, userName: String, isVideoMuted: Boolean)
 }

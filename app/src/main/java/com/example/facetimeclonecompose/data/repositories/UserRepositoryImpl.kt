@@ -24,11 +24,9 @@ class UserRepositoryImpl @Inject constructor(
         makeRequestAndHandleErrors {
             userRemoteDataSource.loginWithEmailAndPassword(LoginRequestModel(email, password))
         }?.let {
-            it.userToken?.let { userToken ->
-                userLocalDataSource.saveUserToken(userToken)
-            } ?: throw Exception("UserToken not found")
             userLocalDataSource.editUserVerifyState(it.isVerified)
             userLocalDataSource.saveUserId(it.userID)
+            userLocalDataSource.saveUserToken(it.userToken?:throw Exception("UserToken not found"))
             it.toUserModel()
         }
 
@@ -44,11 +42,9 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
         }?.let {
-            it.userToken?.let { userToken ->
-                userLocalDataSource.saveUserToken(userToken)
-                userLocalDataSource.editUserVerifyState(false)
-            } ?: throw Exception("UserToken not found")
+            userLocalDataSource.editUserVerifyState(false)
             userLocalDataSource.saveUserId(it.userID)
+            userLocalDataSource.saveUserToken(it.userToken?:throw Exception("UserToken not found"))
             it.toUserModel()
         }
 
@@ -57,33 +53,33 @@ class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.getProfileDataByEmail(userEmail)
         }?.toUserModel() ?: throw UserNotFoundException()
 
-    override suspend fun getUserProfileDataById(userId:String): UserModel {
-       return makeRequestAndHandleErrors {
+    override suspend fun getUserProfileDataById(userId: String): UserModel {
+        return makeRequestAndHandleErrors {
             userRemoteDataSource.getProfileDataByID(userId)
         }?.toUserModel() ?: throw UserNotFoundException()
     }
 
     override suspend fun getUserProfileDataById(): UserModel {
-       return makeRequestAndHandleErrors {
+        return makeRequestAndHandleErrors {
             userRemoteDataSource.getProfileDataByID(getUserID())
         }?.toUserModel() ?: throw UserNotFoundException()
     }
 
 
     override suspend fun sendVerificationEmail() {
-        externalScope.launch(NonCancellable){
+//        externalScope.launch(NonCancellable) {
             makeRequestAndHandleErrors {
                 userRemoteDataSource.sendVerificationCode()
             }
-        }.join()
+//        }
     }
 
     override suspend fun verifyOtpCode(otpCode: Int): UserModel {
         return makeRequestAndHandleErrors {
             userRemoteDataSource.verifyOtpCode(otpCode = otpCode)
         }.let {
-            it?.userToken?.let { userToken ->
-                userLocalDataSource.saveUserToken(userToken)
+            it?.userToken?.let {
+                userLocalDataSource.saveUserToken(it)
                 userLocalDataSource.editUserVerifyState(true)
             } ?: throw Exception("UserToken not found")
             it.toUserModel()
@@ -91,25 +87,26 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteUserAccount() {
-        externalScope.launch(NonCancellable){
+        externalScope.launch(NonCancellable) {
             makeRequestAndHandleErrors {
                 userRemoteDataSource.deleteAccount()
             }.also {
                 userLocalDataSource.deleteUserToken()
+                userLocalDataSource.deleteUserId()
             }
         }.join()
     }
 
     override suspend fun updateUserFcmToken(fcmToken: String) {
         makeRequestAndHandleErrors {
-            //TODO(EditFcmTokenRequestModel TO Single String Arg)
+            userLocalDataSource.saveFCMToken(fcmToken)
             userRemoteDataSource.editUserFcmToken(EditFcmTokenRequestModel(fcmToken))
         }
     }
 
 
     override suspend fun isUserLoggedIn(): Boolean {
-        return userLocalDataSource.getUserToken() != GUEST_USER
+        return userLocalDataSource.getUserID() != GUEST_USER
     }
 
     override suspend fun isUserAccountVerified(): Boolean {
@@ -120,4 +117,6 @@ class UserRepositoryImpl @Inject constructor(
         if (userLocalDataSource.getUserID() == GUEST_USER) throw UserNotFoundException()
         else return userLocalDataSource.getUserID()
     }
+
+    override suspend fun getFCMToken(): String = userLocalDataSource.getFCNToken()
 }

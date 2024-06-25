@@ -1,6 +1,7 @@
 package com.example.facetimeclonecompose.data.sources.local.dataSources
 
 import com.example.facetimeclonecompose.data.utilities.Constants.GUEST_USER
+import com.example.facetimeclonecompose.data.utilities.Constants.USER_FCM_TOKEN_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_ID_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_TOKEN_PREFERENCE_DATA_STORE_KEY
 import com.example.facetimeclonecompose.data.utilities.Constants.USER_VERIFIED_PREFERENCE_DATA_STORE_KEY
@@ -22,6 +23,14 @@ class UserLocalDataSource @Inject constructor(private var dataStore: PreferenceD
         dataStore.removePreference(USER_TOKEN_PREFERENCE_DATA_STORE_KEY)
     }
 
+    suspend fun saveFCMToken(fcmToken: String) = withContext(Dispatchers.IO) {
+        dataStore.putPreference(USER_FCM_TOKEN_PREFERENCE_DATA_STORE_KEY, fcmToken)
+    }
+
+    suspend fun getFCNToken(): String = withContext(Dispatchers.IO) {
+        dataStore.getFirstPreference(USER_FCM_TOKEN_PREFERENCE_DATA_STORE_KEY, GUEST_USER)
+    }
+
     suspend fun getUserVerifiedState(): Boolean = withContext(Dispatchers.IO) {
         dataStore.getFirstPreference(USER_VERIFIED_PREFERENCE_DATA_STORE_KEY, false)
     }
@@ -34,5 +43,9 @@ class UserLocalDataSource @Inject constructor(private var dataStore: PreferenceD
     }
     suspend fun getUserID(): String = withContext(Dispatchers.IO) {
         dataStore.getFirstPreference(USER_ID_PREFERENCE_DATA_STORE_KEY, GUEST_USER)
+    }
+
+    suspend fun deleteUserId() = withContext(Dispatchers.IO) {
+        dataStore.removePreference(USER_ID_PREFERENCE_DATA_STORE_KEY)
     }
 }

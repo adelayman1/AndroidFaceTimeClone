@@ -48,7 +48,6 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.get {
                 url("$BASE_URL/$USER_ENDPOINT/profile")
-                header("No-Authorization","false")
                 body = GetUserProfileByIdRequestModel(userId=userID)
                 contentType(ContentType.Application.Json)
             }
@@ -59,7 +58,6 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.get {
                 url("$BASE_URL/$USER_ENDPOINT/profile/email")
-                header("No-Authorization","false")
                 body = GetUserProfileByEmailRequestModel(email=userEmail)
                 contentType(ContentType.Application.Json)
             }
@@ -69,7 +67,7 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.post {
                 url("$BASE_URL/$USER_ENDPOINT/send-email-code")
-                header("No-Authorization","false")
+                header("No-Authorization","true")
                 contentType(ContentType.Application.Json)
             }
         }
@@ -78,7 +76,7 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.post {
                 url("$BASE_URL/$USER_ENDPOINT/verify-code")
-                header("No-Authorization","false")
+                header("No-Authorization","true")
                 parameter("otp_code",otpCode.toString())
                 contentType(ContentType.Application.Json)
             }
@@ -88,7 +86,6 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.delete {
                 url("$BASE_URL/$USER_ENDPOINT")
-                header("No-Authorization","false")
                 contentType(ContentType.Application.Json)
             }
         }
@@ -97,18 +94,8 @@ class UserRemoteDataSource @Inject constructor(private val httpClient: HttpClien
         withContext(Dispatchers.IO) {
             httpClient.patch {
                 url("$BASE_URL/$USER_ENDPOINT/fcm-token")
-                header("No-Authorization", "false")
                 contentType(ContentType.Application.Json)
                 body = editFcmTokenRequestModel
-            }
-        }
-
-    suspend fun getUserFcmToken(): BaseApiResponse<UserResponseModel> =
-        withContext(Dispatchers.IO) {
-            httpClient.get {
-                url("$BASE_URL/$USER_ENDPOINT/fcm-token")
-                header("No-Authorization","false")
-                contentType(ContentType.Application.Json)
             }
         }
 }
