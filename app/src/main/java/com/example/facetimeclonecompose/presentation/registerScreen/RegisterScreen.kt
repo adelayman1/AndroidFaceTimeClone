@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,8 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
 import com.example.facetimeclonecompose.presentation.loginScreen.components.TransparentInputField
-import com.example.facetimeclonecompose.presentation.loginScreen.uiStates.LoginUiEvent
 import com.example.facetimeclonecompose.presentation.registerScreen.uiStates.RegisterUiEvent
 import com.example.facetimeclonecompose.presentation.ui.theme.BorderGray
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
@@ -44,9 +42,6 @@ import com.example.facetimeclonecompose.presentation.utilities.Screen
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.flow.collectLatest
-import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import org.jitsi.meet.sdk.JitsiMeetUserInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -56,12 +51,13 @@ fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                RegisterViewModel.UiEvent.RegisterSuccess -> navController.navigate(Screen.OtpCodeScreen.route)
                 is RegisterViewModel.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.error)
+                is RegisterViewModel.UiEvent.RegisterSuccess -> navController.navigate(Screen.OtpCodeScreen.route){
+                    popUpTo(0)
+                }
             }
         }
     }
@@ -71,7 +67,7 @@ fun RegisterScreen(
         contentColor = DarkGray
     ) {
         if (viewModel.registerUiState.isLoading) {
-            CircularProgressIndicator()
+            CenterLoadingBar()
         } else {
             Column(
                 modifier = Modifier

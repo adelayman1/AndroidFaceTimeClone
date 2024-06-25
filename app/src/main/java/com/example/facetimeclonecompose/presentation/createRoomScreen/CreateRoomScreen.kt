@@ -1,8 +1,6 @@
 package com.example.facetimeclonecompose.presentation.createRoomScreen
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.Videocam
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,22 +31,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.facetimeclonecompose.presentation.createRoomScreen.components.TextFieldContent
 import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.NewRoomUiEvent
-import com.example.facetimeclonecompose.presentation.homeScreen.HomeViewModel
 import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
-import com.example.facetimeclonecompose.presentation.ui.theme.DarkGraySecond
 import com.example.facetimeclonecompose.presentation.ui.theme.DisabledColor
 import com.example.facetimeclonecompose.presentation.ui.theme.DisabledColorSecond
 import com.example.facetimeclonecompose.presentation.ui.theme.Green
@@ -60,10 +50,6 @@ import com.example.facetimeclonecompose.presentation.utilities.Screen
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.flow.collectLatest
-import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import org.jitsi.meet.sdk.JitsiMeetUserInfo
-import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

@@ -8,14 +8,16 @@ import javax.inject.Inject
 
 class VerifyOtpCodeUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val validOtpCodeUseCase: ValidateOtpCodeUseCase
+    private val validOtpCodeUseCase: ValidateOtpCodeUseCase,
+    private val updateUserFcmTokenUseCase: UpdateUserFcmTokenUseCase
 ) {
     suspend operator fun invoke(otpCode: Int): UserModel {
-        val validateOtpCodeResult = validOtpCodeUseCase(otpCode)
-        if (!validateOtpCodeResult.isFieldDataValid())
-            throw InvalidInputTextException(validateOtpCodeResult.error ?: "")
+        validOtpCodeUseCase(otpCode)
         try {
-            return userRepository.verifyOtpCode(otpCode)
+            val userModel = userRepository.verifyOtpCode(otpCode).also {
+                updateUserFcmTokenUseCase(userRepository.getFCMToken())
+            }
+            return userModel
         } catch (e: ApiException) {
             throw InvalidInputTextException(e.message.toString())
         }

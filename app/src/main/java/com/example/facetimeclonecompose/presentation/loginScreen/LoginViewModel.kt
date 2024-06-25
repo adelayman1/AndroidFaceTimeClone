@@ -1,14 +1,11 @@
 package com.example.facetimeclonecompose.presentation.loginScreen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.facetimeclonecompose.domain.usecases.LoginUseCase
-import com.example.facetimeclonecompose.domain.usecases.ValidateEmailUseCase
-import com.example.facetimeclonecompose.domain.usecases.ValidatePasswordUseCase
 import com.example.facetimeclonecompose.domain.utilities.InvalidEmailException
 import com.example.facetimeclonecompose.domain.utilities.InvalidInputTextException
 import com.example.facetimeclonecompose.domain.utilities.InvalidPasswordException

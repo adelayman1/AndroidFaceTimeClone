@@ -1,7 +1,5 @@
 package com.example.facetimeclonecompose.presentation.utilities
 
-import org.jetbrains.annotations.NotNull
-import java.text.SimpleDateFormat
 import java.util.Date
 
 object DateAndTimeUtils {

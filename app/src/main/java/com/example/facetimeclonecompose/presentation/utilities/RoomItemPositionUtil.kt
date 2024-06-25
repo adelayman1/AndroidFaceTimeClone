@@ -5,80 +5,30 @@ import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.ItemPos
 import javax.inject.Inject
 
 class RoomItemPositionUtil @Inject constructor(){
-    fun getRoomItemPosition(room:RoomModel,roomsList:List<RoomModel>):ItemPosition{
-        val itemPosition = roomsList.indexOfFirst { it.roomId == room.roomId } ?: throw NullPointerException()
-        return roomsList[itemPosition].let { item ->
-            if (roomsList.size == 1) { // only 1 item
-                return@let ItemPosition.SeparatedItem
-            } else if ((itemPosition == 0 && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
-                    roomsList[(itemPosition + 1)].time
-                ))
-            ) {
-//               لو الأولاني وتحته عنصر شبه
-                return@let ItemPosition.FirstItem
-            } else if ((itemPosition == 0 && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
-                    roomsList[(itemPosition + 1)].time
-                ))
-            ) {
-                //               لو الأولاني وتحته عنصر مش شبه
-                return@let ItemPosition.SeparatedItem
-            } else if ((itemPosition != (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) == DateAndTimeUtils.covertTimeToText(
-                    roomsList[(itemPosition + 1)].time
-                ) && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
-                    roomsList[(itemPosition - 1)].time
-                ))
-            ) {
-                //                لو مش الأخير وتحته عنصر شبه وفوقه عنصر شبه
-                return@let ItemPosition.MiddleItem
-            } else if ((itemPosition == (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) == DateAndTimeUtils.covertTimeToText(roomsList[itemPosition - 1].time ?: "10"))
-            ) {
-                //                 لو الأخير وفوقه عنصر شبه
-                return@let ItemPosition.LastItem
-            } else if ((itemPosition == (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) != DateAndTimeUtils.covertTimeToText(roomsList[itemPosition - 1].time ?: "10"))
-            ) {
-                //                 لو الأخير وفوقه عنصر مش شبه
-                return@let ItemPosition.SeparatedItem
-            } else if ((itemPosition != (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) != DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition - 1].time ?: "10"
-                ) && DateAndTimeUtils.covertTimeToText(item.time) == DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition + 1].time ?: "10"
-                ))
-            ) {
-                //                لو مش الأخير وفوقه عنصر مش شبه وتحته عنصر شبه
-                return@let ItemPosition.FirstItem
-            } else if ((itemPosition != (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) == DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition - 1].time ?: "10"
-                ) && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition + 1].time ?: "10"
-                ))
-            ) {
-                //                لو مش الأخير وفوقه عنصر شبه وتحته عنصر مش شبه
-                return@let ItemPosition.LastItem
-            } else if ((itemPosition != (roomsList.size - 1) && DateAndTimeUtils.covertTimeToText(
-                    item.time
-                ) != DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition + 1].time ?: "10"
-                ) && DateAndTimeUtils.covertTimeToText(item.time) != DateAndTimeUtils.covertTimeToText(
-                    roomsList[itemPosition - 1].time ?: "10"
-                ))
-            ) {
-                //                لو مش الأخير وتحته عنصر مش شبه وفوقه عنصر مش شبه
-                return@let ItemPosition.SeparatedItem
-            }else{
-                // unknown case
-                return@let ItemPosition.SeparatedItem
-            }
+    fun getRoomItemPosition(roomId:String,roomsList:List<RoomModel>):ItemPosition{
+        val itemPosition = roomsList.indexOfFirst { it.roomId == roomId }
+        if (itemPosition == -1) {
+            throw IllegalArgumentException("Room not found in list")
+        }
+
+        val currentItemTime = DateAndTimeUtils.covertTimeToText(roomsList[itemPosition].time)
+        val nextItemTime = if (itemPosition + 1 < roomsList.size) DateAndTimeUtils.covertTimeToText(roomsList[itemPosition + 1].time) else null
+        val prevItemTime = if (itemPosition - 1 >= 0) DateAndTimeUtils.covertTimeToText(roomsList[itemPosition - 1].time) else null
+
+        return when {
+            roomsList.size == 1 -> ItemPosition.SeparatedItem
+            itemPosition == 0 && currentItemTime == nextItemTime -> ItemPosition.FirstItem
+            itemPosition == 0 -> ItemPosition.SeparatedItem
+            itemPosition == roomsList.size - 1 && currentItemTime == prevItemTime -> ItemPosition.LastItem
+            itemPosition == roomsList.size - 1 -> ItemPosition.SeparatedItem
+            currentItemTime == nextItemTime && currentItemTime == prevItemTime -> ItemPosition.MiddleItem
+            currentItemTime == nextItemTime -> ItemPosition.FirstItem
+            currentItemTime == prevItemTime -> ItemPosition.LastItem
+            else -> ItemPosition.SeparatedItem
         }
     }
 
 }
+//inline fun <T> List<T>.copy(block: MutableList<T>.() -> Unit): List<T> {
+//    return toMutableList().apply(block)
+//}

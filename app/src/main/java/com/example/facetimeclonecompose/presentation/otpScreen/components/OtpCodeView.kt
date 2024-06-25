@@ -15,9 +15,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -52,23 +49,23 @@ fun OtpCodeView(
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             BasicTextField(
                 value = TextFieldValue(
-                    state.initialCode.text,
-                    TextRange(state.initialCode.text.length)
+                    state.code.text,
+                    TextRange(state.code.text.length)
                 ),
                 onValueChange = { onTextChanged(it.text) },
                 modifier = Modifier.focusRequester(focusRequester = focusRequester),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 decorationBox = {
-                    CodeInputDecoration(state.initialCode.text, state.codeLength)
+                    CodeInputDecoration(state.code.text, state.codeLength)
                 }
             )
         }
-        AnimatedVisibility(state.initialCode.errorMessage != null) {
+        AnimatedVisibility(state.code.errorMessage != null) {
             Text(
                 modifier = Modifier
                     .padding(start = 20.sdp, top = 3.sdp, bottom = 6.sdp)
                     .fillMaxWidth(),
-                text = state.initialCode.errorMessage ?: "",
+                text = state.code.errorMessage ?: "",
                 fontFamily = UbuntuFont,
                 fontWeight = FontWeight.Normal,
                 fontSize = 10.ssp,

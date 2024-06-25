@@ -2,4 +2,8 @@
 <resources>
 
     <style name="Theme.FaceTimeCloneCompose" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.FaceTimeCloneCompose.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FF141414</item>
+        <item name="postSplashScreenTheme">@style/Theme.FaceTimeCloneCompose</item>
+    </style>
 </resources>

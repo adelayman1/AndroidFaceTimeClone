@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,17 +29,16 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
 import com.example.facetimeclonecompose.presentation.otpScreen.components.OtpCodeView
 import com.example.facetimeclonecompose.presentation.otpScreen.uiStates.OtpUiEvent
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
 import com.example.facetimeclonecompose.presentation.ui.theme.LightButtonColor
-import com.example.facetimeclonecompose.presentation.ui.theme.Red
 import com.example.facetimeclonecompose.presentation.ui.theme.UbuntuFont
 import com.example.facetimeclonecompose.presentation.utilities.Screen
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.withContext
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUnitApi::class)
@@ -74,7 +71,7 @@ fun OtpCodeScreen(
     )
     {
         if(viewModel.otpUiState.isLoading){
-            CircularProgressIndicator()
+            CenterLoadingBar()
         }else{
             Column(verticalArrangement = Arrangement.Center) {
 
@@ -107,8 +104,7 @@ fun OtpCodeScreen(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "Enter the verification code sent on Email at \n" +
-                            "adelayman0000@gmail.com",
+                    text = "Enter the verification code sent on your Email \n",
                     textAlign = TextAlign.Center,
                     fontFamily = UbuntuFont,
                     fontWeight = FontWeight.Normal,

@@ -8,5 +8,6 @@ data class RoomModel(
     val roomTitle:String? = null,
     val roomAuthor: String,
     val participants: List<ParticipantModel>?,
-    val time: String
+    var time: String,
+    var isMissed: Boolean = false
 )

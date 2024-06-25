@@ -1,6 +1,7 @@
 package com.example.facetimeclonecompose.presentation.homeScreen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,8 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Videocam
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,17 +30,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
-import com.example.facetimeclonecompose.presentation.ui.theme.Green
 import com.example.facetimeclonecompose.presentation.homeScreen.components.DefaultCard
 import com.example.facetimeclonecompose.presentation.homeScreen.components.RoomListItem
 import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.HomeUiEvent
-import com.example.facetimeclonecompose.presentation.utilities.DateAndTimeUtils
-import com.example.facetimeclonecompose.presentation.ui.theme.Gray60
+import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
+import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
+import com.example.facetimeclonecompose.presentation.ui.theme.Green
 import com.example.facetimeclonecompose.presentation.utilities.Screen
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -63,13 +59,7 @@ fun HomeScreen(
                 is HomeViewModel.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
 
                 is HomeViewModel.UiEvent.ShowShareLinkSheet -> {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, event.link)
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
+                    showShareLinkSheet(context, event.link)
                 }
             }
         }
@@ -81,7 +71,7 @@ fun HomeScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         if(viewModel.roomsUiState.isLoading){
-            CircularProgressIndicator()
+            CenterLoadingBar()
         }else{
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -146,4 +136,14 @@ fun HomeScreen(
         }
 
     }
+}
+
+private fun showShareLinkSheet(context: Context, link: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, link)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }

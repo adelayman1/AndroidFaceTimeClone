@@ -7,5 +7,6 @@ data class RoomItemUiState(
     var itemPosition:ItemPosition,
     var roomTypeId:Int,
     var roomType:String,
-    val onEditCall: () -> Unit//TODO()
+    var isMissedCall : Boolean = false
+//    val onEditCall: () -> Unit//TODO()
 )

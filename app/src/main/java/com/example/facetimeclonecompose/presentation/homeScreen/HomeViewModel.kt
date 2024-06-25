@@ -1,6 +1,5 @@
 package com.example.facetimeclonecompose.presentation.homeScreen
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,98 +9,104 @@ import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.usecases.CreateLinkRoomUseCase
 import com.example.facetimeclonecompose.domain.usecases.GetUserRoomsUseCase
 import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.HomeUiEvent
-import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.RoomItemUiState
 import com.example.facetimeclonecompose.presentation.homeScreen.uiStates.RoomsUiState
-import com.example.facetimeclonecompose.presentation.utilities.Constants
-import com.example.facetimeclonecompose.presentation.utilities.Constants.DEEP_LINK_BASE_URL
-import com.example.facetimeclonecompose.presentation.utilities.DateAndTimeUtils
-import com.example.facetimeclonecompose.presentation.utilities.RoomItemPositionUtil
+import com.example.facetimeclonecompose.presentation.mappers.RoomToUiStateMapper
+import com.example.facetimeclonecompose.presentation.utilities.Constants.CALL_LINK_BASE_URL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import java.lang.NullPointerException
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getUserRoomsUseCase: GetUserRoomsUseCase,
     private val createLinkRoomUseCase: CreateLinkRoomUseCase,
-    private val roomItemPositionUtil: RoomItemPositionUtil
+    private val roomToUiStateMapper: RoomToUiStateMapper
 ) : ViewModel() {
     var roomsUiState by mutableStateOf(RoomsUiState(isLoading = true))
-        private set;
+        private set
 
     private var _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private var allRooms: List<RoomModel>? = null
+    private var allRooms: MutableList<RoomModel> = mutableListOf()
 
     init {
-        viewModelScope.launch {
-            try {
-                roomsUiState = roomsUiState.copy(isLoading = true)
-                allRooms = getUserRoomsUseCase()
-                if (allRooms != null) {
-                    updateRoomsUiState()
-                } else {
-                    roomsUiState = roomsUiState.copy(isLoading = false, noRooms = true)
-                    _eventFlow.emit(UiEvent.ShowMessage(NullPointerException().message.toString()))
-                }
-            } catch (e: Exception) {
-                _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
-                roomsUiState = roomsUiState.copy(isLoading = false)
-            }
+        loadRooms()
+    }
+
+    private fun loadRooms() = viewModelScope.launch {
+        roomsUiState = roomsUiState.copy(isLoading = true)
+        try {
+            allRooms = getUserRoomsUseCase()?.toMutableList() ?: mutableListOf()
+            updateRoomsUiState()
+        } catch (e: Exception) {
+            handleGeneralError(e)
+        } finally {
+            roomsUiState = roomsUiState.copy(isLoading = false)
         }
     }
 
-    private fun createLinkRoom() {
-        viewModelScope.launch {
-            try {
-                roomsUiState = roomsUiState.copy(isLoading = true)
-                createLinkRoomUseCase().apply {
-                    roomsUiState = roomsUiState.copy(isLoading = false)
-                    _eventFlow.emit(UiEvent.ShowShareLinkSheet(DEEP_LINK_BASE_URL + roomId))
-                }
-            } catch (e: Exception) {
-                roomsUiState = roomsUiState.copy(isLoading = false)
-                _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
+    // TODO("REFACTOR TO CLEAN CODE AND SORT FUNCTIONS CORRECTLY")
+    private fun createLinkRoom() = viewModelScope.launch {
+        roomsUiState = roomsUiState.copy(isLoading = true)
+        try {
+            createLinkRoomUseCase().apply {
+                addNewItemToRoomsUiState(this)
+                _eventFlow.emit(UiEvent.ShowShareLinkSheet(CALL_LINK_BASE_URL + roomId))
             }
+        } catch (e: Exception) {
+            handleGeneralError(e)
+        } finally {
+            roomsUiState = roomsUiState.copy(isLoading = false)
         }
+    }
 
+    private fun updateRoomsUiState() {
+        roomsUiState = roomsUiState.copy(
+            rooms = allRooms.map { roomToUiStateMapper.map(it, allRooms) },
+            noRooms = allRooms.isEmpty()
+        )
+    }
+
+    private fun addNewItemToRoomsUiState(newRoom: RoomModel) {
+        allRooms.add(0, newRoom)
+        updateRoomsUiState()
+    }
+
+//   YOU CAN ALSO USE THIS FUNCTION TO ADD NEW ITEM TO ROOMS UI STATE
+//   WITHOUT UPDATING THE WHOLE LIST , THIS WILL BE MORE EFFICIENT IN BIGGER LISTS.
+//   I DIDN'T USE IT BECAUSE I DIDN'T WANT TO MAKE THE CODE MORE COMPLEX
+//
+//    private fun addNewItemToRoomsUiState(newRoom: RoomModel) {
+//        allRooms.add(0, newRoom)
+//        val tempRoomsList = listOf(roomToUiStateMapper.map(newRoom, allRooms)) + roomsUiState.rooms
+//        val updatedRoomsList = updatePreviousItem(tempRoomsList)
+//        roomsUiState = roomsUiState.copy(
+//            rooms = updatedRoomsList, noRooms = false
+//        )
+//    }
+//
+//    private fun updatePreviousItem(roomsList: List<RoomItemUiState>): List<RoomItemUiState> {
+//        if (roomsList.size > 1) {
+//            val prevItemIndex = 1
+//            val prevRoom = roomToUiStateMapper.map(allRooms[prevItemIndex], allRooms)
+//            return roomsList.copy { this[prevItemIndex] = prevRoom }
+//        }
+//        return roomsList
+//    }
+
+    private suspend fun handleGeneralError(e: Exception) {
+        e.printStackTrace()
+        _eventFlow.emit(UiEvent.ShowMessage(e.message.toString()))
     }
 
     fun onEvent(action: HomeUiEvent) {
         when (action) {
             HomeUiEvent.CreateLink -> createLinkRoom()
         }
-    }
-
-    private fun updateRoomsUiState(){
-        val newRoomsList = allRooms!!.map { room ->
-            room.toRoomUiState()
-        }
-        roomsUiState = roomsUiState.copy(
-            rooms = newRoomsList,
-            isLoading = false
-        )
-    }
-    private fun RoomModel.toRoomUiState():RoomItemUiState {
-       return RoomItemUiState(
-            roomId = roomId,
-            roomTitle = roomTitle ?: "Empty Room",
-            time = DateAndTimeUtils.covertTimeToText(time)
-                ?: "HINM", // TODO(CHange HINM)
-            itemPosition = roomItemPositionUtil.getRoomItemPosition(this, allRooms!!),
-            roomTypeId = roomTypeId,
-            roomType = roomType,
-            onEditCall = {
-                roomsUiState = roomsUiState.copy(rooms = roomsUiState.rooms.map {
-                    roomsUiState.rooms.find { it.roomId == roomId }!!.copy(time = "1666216800000")
-                }) // TODO("Handle edit")
-            }
-        )
     }
 
     sealed class UiEvent {
