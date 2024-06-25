@@ -193,7 +193,13 @@ facetimeclonecompose
  ┃ ┃ ┃ ┣ FaceTimeApp.kt
  ┃ ┃ ┃ ┗ MainActivity.kt
 ```
-       
+
+## Future Enhancements
+
+- Implement an Edit button mechanism
+- Develop a room information screen
+
+
 ## LICENSE
 ``` MIT License
 
