@@ -7,7 +7,7 @@ object Constants {
     const val CALL_INVITATION = "call"
     const val RESPONSE_CALL = "response"
     const val CALL_TYPE = "response"
-    const val ROOM_NAME = "name"
-    const val ROOM_KEY= "key"
+    const val ROOM_AUTHOR = "name"
+    const val ROOM_ID= "key"
     const val ROOM_AUTHOR_UID= "authorUID"
 }

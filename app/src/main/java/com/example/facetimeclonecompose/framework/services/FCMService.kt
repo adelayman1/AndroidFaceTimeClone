@@ -3,18 +3,20 @@ package com.example.facetimeclonecompose.framework.services
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent.*
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.facetimeclonecompose.R
 import com.example.facetimeclonecompose.domain.usecases.UpdateUserFcmTokenUseCase
 import com.example.facetimeclonecompose.framework.services.Constants.CALL_INVITATION
@@ -22,10 +24,9 @@ import com.example.facetimeclonecompose.framework.services.Constants.CALL_TYPE
 import com.example.facetimeclonecompose.framework.services.Constants.CHANNEL_ID
 import com.example.facetimeclonecompose.framework.services.Constants.NOTIFICATION_ID
 import com.example.facetimeclonecompose.framework.services.Constants.RECEIVED_MESSAGE_TYPE
-import com.example.facetimeclonecompose.framework.services.Constants.RESPONSE_CALL
-import com.example.facetimeclonecompose.framework.services.Constants.ROOM_AUTHOR_UID
-import com.example.facetimeclonecompose.framework.services.Constants.ROOM_KEY
-import com.example.facetimeclonecompose.framework.services.Constants.ROOM_NAME
+import com.example.facetimeclonecompose.framework.services.Constants.ROOM_ID
+import com.example.facetimeclonecompose.framework.services.Constants.ROOM_AUTHOR
+import com.example.facetimeclonecompose.presentation.utilities.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +51,7 @@ class FCMService @Inject constructor() : FirebaseMessagingService() {
                 powerOptimization()
                 showCallInvitationNotification(remoteMessage)
             }
-        } else if (remoteMessage.data[RECEIVED_MESSAGE_TYPE].toString() == RESPONSE_CALL) {
+        } //else if (remoteMessage.data[RECEIVED_MESSAGE_TYPE].toString() == RESPONSE_CALL) {
 //            with(NotificationManagerCompat.from(this)) {
 //                cancel(NOTIFICATION_ID)
 //            }
@@ -58,23 +59,18 @@ class FCMService @Inject constructor() : FirebaseMessagingService() {
 //            intent.putExtra("response", remoteMessage.data.get("response").toString())
 //            intent.putExtra("roomKey", remoteMessage.data.get("key").toString())
 //            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-        }
+        //}
     }
 
     private fun showCallScreen(remoteMessage: RemoteMessage):Intent {
-        val incomingActivityIntent: Intent = Intent(this, IncomingActivity::class.java)
-        incomingActivityIntent.putExtra(
-            CALL_TYPE,
-            remoteMessage.data[CALL_TYPE].toString()
-        )
-        incomingActivityIntent.putExtra(ROOM_NAME, remoteMessage.data[ROOM_NAME].toString())
-        incomingActivityIntent.putExtra(ROOM_KEY, remoteMessage.data[ROOM_KEY].toString())
-        incomingActivityIntent.putExtra(
-            ROOM_AUTHOR_UID,
-            remoteMessage.data[ROOM_AUTHOR_UID].toString()
-        )
-        incomingActivityIntent.putExtra(RECEIVED_MESSAGE_TYPE, CALL_TYPE)
-        return incomingActivityIntent
+        val incomingCallIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("${Constants.DEEP_LINK_BASE_URL}/callId=${remoteMessage.data[ROOM_ID].toString()}/callAuthor=${remoteMessage.data[ROOM_AUTHOR].toString()}/roomType=${remoteMessage.data[CALL_TYPE].toString()}")
+//            Uri.parse("${Constants.DEEP_LINK_BASE_URL}/callId=${remoteMessage.data[ROOM_KEY].toString()}/callAuthor=${remoteMessage.data[ROOM_NAME].toString()}/roomType=${{remoteMessage.data[CALL_TYPE].toString()}}")
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        return incomingCallIntent
     }
 
     private fun powerOptimization(){
@@ -140,7 +136,7 @@ class FCMService @Inject constructor() : FirebaseMessagingService() {
             )
             .setContentIntent(
                 getActivity(
-                    this,
+                    applicationContext,
                     0,
                     incomingCallIntent,
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) FLAG_IMMUTABLE else FLAG_UPDATE_CURRENT

@@ -81,6 +81,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-beta01"
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha09"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
+    implementation 'androidx.compose.foundation:foundation-layout:1.4.0-alpha04'
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
@@ -98,7 +99,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     //jitsi-meet
     implementation ('org.jitsi.react:jitsi-meet-sdk:7.0.1') { transitive = true }
+    //splash api
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
-
-    implementation 'androidx.compose.foundation:foundation-layout:1.4.0-alpha04'
 }

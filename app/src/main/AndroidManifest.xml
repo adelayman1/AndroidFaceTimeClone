@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -13,22 +14,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:name=".FaceTimeApp"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FaceTimeCloneCompose"
+        android:theme="@style/Theme.FaceTimeCloneCompose.Splash"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.FaceTimeCloneCompose">
+            android:theme="@style/Theme.FaceTimeCloneCompose.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+                <data android:scheme="faceTime" android:host="incomingCall"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
         </activity>
         <service
             android:name=".framework.services.FCMService"
-            android:exported="true">
+            android:exported="true"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

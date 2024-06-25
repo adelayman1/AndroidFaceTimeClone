@@ -10,7 +10,9 @@ object DateAndTimeUtils {
     private const val HOUR_MILLIS: Long = 60 * MINUTE_MILLIS
     private const val DAY_MILLIS: Long = 24 * HOUR_MILLIS
     private const val SUFFIX = "Ago"
-    fun covertTimeToText(time: String): String? {
+    fun covertTimeToText(time: String): String {
+        if(time == "0") return "Just Now"
+
         if (time.toLong() < 1000000000000L) {
             throw(Exception("Enter time in milliseconds"))
         }
@@ -33,16 +35,16 @@ object DateAndTimeUtils {
             }
         }
     }
-    fun fromMillisSecondToDate(time: String): String? {
-        if (time.toLong() < 1000000000000L) {
-            throw(Exception("Enter time in milliseconds"))
-        }
-        val tempTime=covertTimeToText(time)
-        return if (tempTime.equals("Today")||tempTime.equals("Yesterday"))
-            tempTime
-         else {
-            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
-            simpleDateFormat.format(time.toLong())
-        }
-    }
+//    fun fromMillisSecondToDate(time: String): String? {
+//        if (time.toLong() < 1000000000000L) {
+//            throw(Exception("Enter time in milliseconds"))
+//        }
+//        val tempTime=covertTimeToText(time)
+//        return if (tempTime.equals("Today")||tempTime.equals("Yesterday"))
+//            tempTime
+//         else {
+//            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+//            simpleDateFormat.format(time.toLong())
+//        }
+//    }
 }
