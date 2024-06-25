@@ -4,6 +4,9 @@
     <img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Badge"/>
   </a>
   
+[![Support Palestine](https://raw.githubusercontent.com/Ademking/Support-Palestine/main/Support-Palestine.svg)](https://www.map.org.uk)
+[![StandWithPalestine](https://raw.githubusercontent.com/Safouene1/support-palestine-banner/master/StandWithPalestine.svg)](https://github.com/Safouene1/support-palestine-banner/Markdown-pages/Support.md)
+
 This repository contains the **FaceTimeClone** app, a real-time video calling application built with Kotlin and Jetpack Compose. The app follows best practices and employs SOLID principles and clean code techniques.it implements Coroutines,Ktor-client for HTTP requests,MVVM architecture,Clean architecture,Hilt,Navigation component,Jitsi Meet and more...
 
 
