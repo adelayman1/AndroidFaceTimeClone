@@ -1,17 +1,16 @@
 package com.example.facetimeclonecompose.domain.usecases
 
-import com.example.facetimeclonecompose.domain.models.ValidateResult
+import com.example.facetimeclonecompose.domain.utilities.InvalidOtpException
 import javax.inject.Inject
 
 class ValidateOtpCodeUseCase @Inject constructor() {
-    operator fun invoke(otpCode: Int): ValidateResult {
+    operator fun invoke(otpCode: Int) {
         if (otpCode.toString().length != 4)
-            return ValidateResult(error = "Code is very short")
-        if (isAllCharsSame(otpCode))
-            return ValidateResult(error = "Code is not valid")
-        return ValidateResult()
+            throw InvalidOtpException(error = "Code is very short")
+        if (areAllDigitsIdentical(otpCode))
+            throw InvalidOtpException(error = "Code is not valid")
     }
-    private fun isAllCharsSame(otpCode: Int):Boolean{
+    private fun areAllDigitsIdentical(otpCode: Int):Boolean{
         return (
             getCharByIndex(otpCode, 0) == getCharByIndex(otpCode, 1)
             && getCharByIndex(otpCode, 1) == getCharByIndex(otpCode, 2)
