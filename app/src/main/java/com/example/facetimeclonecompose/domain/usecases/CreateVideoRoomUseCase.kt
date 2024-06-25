@@ -1,37 +1,27 @@
 package com.example.facetimeclonecompose.domain.usecases
 
-import com.example.facetimeclonecompose.domain.models.RoomModel
 import com.example.facetimeclonecompose.domain.models.RoomTypeModel
 import com.example.facetimeclonecompose.domain.repositories.RoomRepository
-import com.example.facetimeclonecompose.domain.repositories.UserRepository
-import com.example.facetimeclonecompose.domain.utilities.InvalidInputTextException
-import com.example.facetimeclonecompose.domain.utilities.UserNotFoundException
-import com.example.facetimeclonecompose.domain.utilities.UserNotVerifiedException
 import javax.inject.Inject
 
 class CreateVideoRoomUseCase @Inject constructor(
-    private val userRepository: UserRepository,
     private val roomRepository: RoomRepository,
+    private val launchJitsiMeetingUseCase: LaunchJitsiMeetingUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val checkIsAccountValidUseCase: CheckIsAccountValidUseCase
 ) {
-    suspend operator fun invoke(participantsEmails: List<String>? = null): RoomModel {
+    suspend operator fun invoke(participantsEmails: List<String>? = null) {
         checkIsAccountValidUseCase()
         if (participantsEmails != null)
             validateParticipantsEmails(participantsEmails)
-        return roomRepository.createRoom(RoomTypeModel.FACETIME, participantsEmails)!!
+        roomRepository.createRoom(RoomTypeModel.FACETIME, participantsEmails)!!.apply {
+            launchJitsiMeetingUseCase(roomId, isVideoMuted = false)
+        }
     }
 
     private fun validateParticipantsEmails(participantsEmails: List<String>) {
         participantsEmails.forEach { participantEmail ->
-            validateEmail(participantEmail)
+            validateEmailUseCase(participantEmail)
         }
-    }
-
-    private fun validateEmail(email: String) {
-        val validateEmailResult = validateEmailUseCase(email)
-        if (!validateEmailResult.isFieldDataValid()) throw InvalidInputTextException(
-            validateEmailResult.error ?: ""
-        )
     }
 }

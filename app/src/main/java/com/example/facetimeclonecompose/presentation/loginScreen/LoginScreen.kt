@@ -5,6 +5,7 @@ import android.content.Intent
 import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +51,7 @@ import androidx.navigation.NavController
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
 import ir.kaaveh.sdpcompose.sdp
 import com.example.facetimeclonecompose.presentation.loginScreen.LoginViewModel.UiEvent
+import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
 import com.example.facetimeclonecompose.presentation.loginScreen.components.TransparentInputField
 import com.example.facetimeclonecompose.presentation.loginScreen.uiStates.LoginUiEvent
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
@@ -73,8 +75,12 @@ fun LoginScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.error)
-                UiEvent.LoginSuccess -> navController.navigate(Screen.HomeScreen.route)
-                UiEvent.VerifyAccount -> navController.navigate(Screen.OtpCodeScreen.route)
+                UiEvent.LoginSuccess -> navController.navigate(Screen.HomeScreen.route){
+                    popUpTo(0)
+                }
+                is UiEvent.VerifyAccount -> navController.navigate(Screen.OtpCodeScreen.route){
+                    popUpTo(0)
+                }
             }
         }
     }
@@ -84,7 +90,13 @@ fun LoginScreen(
         contentColor = DarkGray
     ) {
         if (viewModel.loginUiState.isLoading) {
-            CircularProgressIndicator()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                CenterLoadingBar()
+            }
+
         } else {
             Column(
                 modifier = Modifier

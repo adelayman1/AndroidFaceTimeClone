@@ -2,6 +2,7 @@ package com.example.facetimeclonecompose.presentation.createRoomScreen
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +48,7 @@ import androidx.navigation.NavController
 import com.example.facetimeclonecompose.presentation.createRoomScreen.components.TextFieldContent
 import com.example.facetimeclonecompose.presentation.createRoomScreen.uiStates.NewRoomUiEvent
 import com.example.facetimeclonecompose.presentation.homeScreen.HomeViewModel
+import com.example.facetimeclonecompose.presentation.loginScreen.components.CenterLoadingBar
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGray
 import com.example.facetimeclonecompose.presentation.ui.theme.DarkGraySecond
 import com.example.facetimeclonecompose.presentation.ui.theme.DisabledColor
@@ -61,6 +63,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 import org.jitsi.meet.sdk.JitsiMeetUserInfo
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -71,37 +74,15 @@ fun CreateRoomScreen(
 ) {
     val (focusRequester) = FocusRequester.createRefs()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-
                 is CreateRoomViewModel.UiEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
-                is CreateRoomViewModel.UiEvent.AudioCallCreatedSuccessfully -> {
-                    val userInfo = JitsiMeetUserInfo()
-                    userInfo.displayName = event.userName
-                    val conferenceOptions: JitsiMeetConferenceOptions =
-                        JitsiMeetConferenceOptions.Builder()
-                            .setRoom("https://meet.jit.si/${event.roomKey}")
-                            .setAudioMuted(false)
-                            .setUserInfo(userInfo)
-                            .setVideoMuted(true)
-                            .setFeatureFlag("prejoinpage.enabled", false)
-                            .build()
-                    JitsiMeetActivity.launch(context, conferenceOptions)
-                }
-                is CreateRoomViewModel.UiEvent.VideoCallCreatedSuccessfully -> {
-                    val userInfo = JitsiMeetUserInfo()
-                    userInfo.displayName = event.userName
-                    val conferenceOptions: JitsiMeetConferenceOptions =
-                        JitsiMeetConferenceOptions.Builder()
-                            .setRoom("https://meet.jit.si/${event.roomKey}")
-                            .setAudioMuted(false)
-                            .setUserInfo(userInfo)
-                            .setVideoMuted(false)
-                            .setFeatureFlag("prejoinpage.enabled", false)
-                            .build()
-                    JitsiMeetActivity.launch(context, conferenceOptions)
+
+                CreateRoomViewModel.UiEvent.RoomCreatedSuccessfully -> {
+                    navController.navigate(Screen.HomeScreen.route){
+                        popUpTo(0)
+                    }
                 }
             }
         }
@@ -112,7 +93,7 @@ fun CreateRoomScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         if (viewModel.createRoomUiState.isLoading) {
-            CircularProgressIndicator()
+            CenterLoadingBar()
         } else {
             Column(
                 modifier = Modifier
